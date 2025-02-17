@@ -283,20 +283,5 @@ Future<void> updateProfile({
 
 /************************************************************/
 
-  bool _isFirstLogin = false;
 
-  bool get isFirstLogin => _isFirstLogin;
-
-  Future<void> checkFirstLogin() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    _isFirstLogin = prefs.getBool("isFirstLogin") ?? true; // Par défaut, c'est `true`
-    notifyListeners();
-  }
-
-  Future<void> setFirstLoginDone() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool("isFirstLogin", false);
-    _isFirstLogin = false;
-    notifyListeners();
-  }
 }

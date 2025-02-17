@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/constants/api_constants.dart';
 
 class AuthRepository {
@@ -183,5 +184,31 @@ Future<Map<String, dynamic>> verifyOtp(String email, String otp) async {
       throw Exception(jsonDecode(response.body)["message"] ?? "Failed to update profile");
     }
   }
+
+//*********************************************/
+  Future<Map<String, dynamic>> completeProfile(Map<String, dynamic> profileData, String token) async {
+    final url = Uri.parse(ApiConstants.completeProfileEndpoint); // 🔹 Mets l’URL correcte ici
+
+    try {
+      final response = await http.patch(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token", // 🔹 Assure-toi que l'utilisateur est authentifié
+        },
+        body: jsonEncode(profileData),
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw Exception("Failed to update profile: ${response.body}");
+      }
+    } catch (e) {
+      throw Exception("Error completing profile: $e");
+    }
+  }
+
+ 
 }
 

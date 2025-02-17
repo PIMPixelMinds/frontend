@@ -6,6 +6,7 @@ import 'view/auth/password_security_page.dart';
 import 'view/auth/perso_information_page.dart';
 import 'view/auth/primary_caregiver_page.dart';
 import 'view/auth/register_page.dart';
+import 'view/auth/setup_account_page.dart';
 import 'view/home/home_page.dart';
 import 'viewmodel/auth_viewmodel.dart';
 
@@ -39,9 +40,10 @@ class MyApp extends StatelessWidget {
           '/register': (context) => RegisterPage(),
           '/home': (context) => HomePage(),
           '/passwordSecurity': (context) => PasswordSecurityPage(),
-           '/persoInfo': (context) => PersonalInformationPage(),
+           '/personalInformation': (context) => PersonalInformationPage(),
            '/medicalHistory': (context) => MedicalHistoryPage(),
           '/primaryCaregiver': (context) => PrimaryCaregiverPage(),
+          '/setupAccount': (context) => SetupAccountPage(),
         },
       ),
     );

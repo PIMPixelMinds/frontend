@@ -33,7 +33,7 @@ class ProfilePage extends StatelessWidget {
                       children: [
                         _buildSectionTitle("Account Settings", isDarkMode),
                         _buildProfileOption(context, Icons.person, "Personal Information", () {
-                          Navigator.pushNamed(context, '/persoInfo');
+                          Navigator.pushNamed(context, '/personalInformation');
                         }, isDarkMode),
                         _buildProfileOption(context, Icons.lock, "Password & Security", () {
                           Navigator.pushNamed(context, '/passwordSecurity');

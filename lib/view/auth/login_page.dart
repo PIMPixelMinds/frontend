@@ -201,7 +201,7 @@ class _LoginPageState extends State<LoginPage> {
     if (value == null || value.isEmpty) {
       return "This field is required";
     }
-    if (isPassword && value.length < 6) {
+    if (isPassword && value.length < 5) {
       return "Password must be at least 6 characters long.";
     }
     if (!isPassword && !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
