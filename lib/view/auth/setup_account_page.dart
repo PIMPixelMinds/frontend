@@ -33,7 +33,8 @@ class _SetupAccountPageState extends State<SetupAccountPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Spacer(),
-            const Icon(Icons.radio_button_checked, size: 60, color: Colors.blue),
+            const Icon(Icons.radio_button_checked,
+                size: 60, color: Colors.blue),
             const SizedBox(height: 10),
             const Text(
               "Let’s setup your account",
@@ -41,11 +42,17 @@ class _SetupAccountPageState extends State<SetupAccountPage> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 5),
-            const Text("A few steps ahead to go.", style: TextStyle(fontSize: 16, color: Colors.grey)),
+            const Text("A few steps ahead to go.",
+                style: TextStyle(fontSize: 16, color: Colors.grey)),
             const SizedBox(height: 15),
-            const Text("Personal Details", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.grey)),
+            const Text("Personal Details",
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey)),
             const SizedBox(height: 15),
-            _buildTextField("Full Name", "Enter your name", fullNameController, false, isDarkMode),
+            _buildTextField("Full Name", "Enter your name", fullNameController,
+                false, isDarkMode),
             const SizedBox(height: 15),
             _buildDropdownField("Gender", isDarkMode),
             const SizedBox(height: 15),
@@ -54,7 +61,9 @@ class _SetupAccountPageState extends State<SetupAccountPage> {
             ElevatedButton(
               onPressed: () async {
                 // Validate inputs
-                if (fullNameController.text.isEmpty || selectedGender == null || dateController.text.isEmpty) {
+                if (fullNameController.text.isEmpty ||
+                    selectedGender == null ||
+                    dateController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Please fill in all fields")),
                   );
@@ -79,9 +88,11 @@ class _SetupAccountPageState extends State<SetupAccountPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
               ),
-              child: const Text("Next", style: TextStyle(fontSize: 16, color: Colors.white)),
+              child: const Text("Next",
+                  style: TextStyle(fontSize: 16, color: Colors.white)),
             ),
             const Spacer(),
             const Divider(),
@@ -92,11 +103,13 @@ class _SetupAccountPageState extends State<SetupAccountPage> {
     );
   }
 
-  Widget _buildTextField(String label, String hint, TextEditingController controller, bool isPassword, bool isDarkMode) {
+  Widget _buildTextField(String label, String hint,
+      TextEditingController controller, bool isPassword, bool isDarkMode) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+        Text(label,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
         const SizedBox(height: 5),
         TextField(
           controller: controller,
@@ -105,7 +118,9 @@ class _SetupAccountPageState extends State<SetupAccountPage> {
             hintText: hint,
             filled: true,
             fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[200],
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide.none),
           ),
         ),
       ],
@@ -116,7 +131,8 @@ class _SetupAccountPageState extends State<SetupAccountPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+        Text(label,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
         const SizedBox(height: 5),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -151,7 +167,8 @@ class _SetupAccountPageState extends State<SetupAccountPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+        Text(label,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
         const SizedBox(height: 5),
         TextField(
           controller: dateController,
@@ -160,9 +177,22 @@ class _SetupAccountPageState extends State<SetupAccountPage> {
             hintText: "mm/dd/yyyy",
             filled: true,
             fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[200],
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide.none),
             suffixIcon: IconButton(
               icon: const Icon(Icons.calendar_today),
+              /*onPressed: () async {
+                DateTime? pickedDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(1900),
+                  lastDate: DateTime.now(),
+                );
+                setState(() {
+                  dateController.text = _formatDate(pickedDate); // Format the date
+                });
+                }*/
               onPressed: () async {
                 DateTime? pickedDate = await showDatePicker(
                   context: context,
@@ -170,9 +200,10 @@ class _SetupAccountPageState extends State<SetupAccountPage> {
                   firstDate: DateTime(1900),
                   lastDate: DateTime.now(),
                 );
+
                 if (pickedDate != null) {
                   setState(() {
-                    dateController.text = _formatDate(pickedDate); // Format the date
+                    dateController.text = _formatDate(pickedDate);
                   });
                 }
               },
