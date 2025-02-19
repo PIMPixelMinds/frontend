@@ -3,6 +3,7 @@
 A new Flutter project.
 
 ## Getting Started
+echo "Testing the new workflow again" >> README.md 
 
 This project is a starting point for a Flutter application.
 
