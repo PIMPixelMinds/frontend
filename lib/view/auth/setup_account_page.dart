@@ -182,17 +182,7 @@ class _SetupAccountPageState extends State<SetupAccountPage> {
                 borderSide: BorderSide.none),
             suffixIcon: IconButton(
               icon: const Icon(Icons.calendar_today),
-              /*onPressed: () async {
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(1900),
-                  lastDate: DateTime.now(),
-                );
-                setState(() {
-                  dateController.text = _formatDate(pickedDate); // Format the date
-                });
-                }*/
+             
               onPressed: () async {
                 DateTime? pickedDate = await showDatePicker(
                   context: context,
