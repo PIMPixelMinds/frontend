@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-
-
+//Becha:
+import 'news_feed_screen.dart';
 import '../auth/profile_page.dart';
 import 'HealthTrackerPage.dart';
 
@@ -43,7 +43,6 @@ class _HomePageState extends State<HomePage> {
     HealthTrackerPage(),
     Center(child: Text("Medications", style: TextStyle(fontSize: 22))),
     ProfilePage(),
-
   ];
 
   void _onItemTapped(int index) {
@@ -54,25 +53,36 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
-        backgroundColor: Colors.white,
-        elevation: 10,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today), label: "Appointment"),
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: "Logbook"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.medication), label: "Medications"),
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label: "Chatbot"),
-        ],
+    return GestureDetector(
+      onHorizontalDragEnd: (details) {
+        if (details.primaryVelocity! > 0) {
+          // Swiping Left → Navigate to MS News Feed ken theb right < 0 w raby ikadderni aala fe3el lkhir
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => NewsFeedScreen()),
+          );
+        }
+      },
+      child: Scaffold(
+        body: _pages[_selectedIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          selectedItemColor: Colors.blue,
+          unselectedItemColor: Colors.grey,
+          backgroundColor: Colors.white,
+          elevation: 10,
+          type: BottomNavigationBarType.fixed,
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.calendar_today), label: "Appointment"),
+            BottomNavigationBarItem(icon: Icon(Icons.book), label: "Logbook"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.medication), label: "Medications"),
+            BottomNavigationBarItem(icon: Icon(Icons.chat), label: "Chatbot"),
+          ],
+        ),
       ),
     );
   }
