@@ -10,7 +10,7 @@ import 'view/auth/setup_account_page.dart';
 import 'view/home/home_page.dart';
 import 'viewmodel/auth_viewmodel.dart';
 
-void main() {
+void main() { 
   runApp(const MyApp());
 }
 
