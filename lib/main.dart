@@ -1,30 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'view/auth/login_page.dart';
+import 'view/home/home_page.dart';
+import 'view/auth/register_page.dart';
 import 'view/auth/medical_history_page.dart';
 import 'view/auth/password_security_page.dart';
 import 'view/auth/perso_information_page.dart';
 import 'view/auth/primary_caregiver_page.dart';
-import 'view/auth/register_page.dart';
 import 'view/auth/setup_account_page.dart';
-import 'view/home/home_page.dart';
 import 'viewmodel/auth_viewmodel.dart';
 
-void main() { 
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool isLoggedIn = (prefs.getBool("rememberMe") ?? false) == true;
+
+  runApp(MyApp(isLoggedIn: isLoggedIn));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isLoggedIn;
+
+  const MyApp({Key? key, required this.isLoggedIn}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => AuthViewModel()), // 🔥 Ajout de AuthViewModel
+        ChangeNotifierProvider(create: (context) => AuthViewModel()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        home: isLoggedIn ? const HomePage() : const LoginPage(),
         themeMode: ThemeMode.system,
         theme: ThemeData(
           brightness: Brightness.light,
@@ -34,16 +43,15 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.dark,
           primarySwatch: Colors.blue,
         ),
-        initialRoute: '/login',
         routes: {
-          '/login': (context) => LoginPage(),
-          '/register': (context) => RegisterPage(),
-          '/home': (context) => HomePage(),
-          '/passwordSecurity': (context) => PasswordSecurityPage(),
-           '/personalInformation': (context) => PersonalInformationPage(),
-           '/medicalHistory': (context) => MedicalHistoryPage(),
-          '/primaryCaregiver': (context) => PrimaryCaregiverPage(),
-          '/setupAccount': (context) => SetupAccountPage(),
+          '/login': (context) => const LoginPage(),
+          '/register': (context) => const RegisterPage(),
+          '/home': (context) => const HomePage(),
+          '/passwordSecurity': (context) => const PasswordSecurityPage(),
+          '/personalInformation': (context) => const PersonalInformationPage(),
+          '/medicalHistory': (context) => const MedicalHistoryPage(),
+          '/primaryCaregiver': (context) => const PrimaryCaregiverPage(),
+          '/setupAccount': (context) => const SetupAccountPage(),
         },
       ),
     );

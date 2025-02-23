@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+//becha
+import 'package:shared_preferences/shared_preferences.dart';
+import '../auth/login_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -9,8 +12,13 @@ class ProfilePage extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Profile"), backgroundColor: AppColors.primaryBlue,),
-      backgroundColor: isDarkMode ? AppColors.primaryBlue : AppColors.primaryBlue, // Fond principal du Scaffold
+      appBar: AppBar(
+        title: const Text("Profile"),
+        backgroundColor: AppColors.primaryBlue,
+      ),
+      backgroundColor: isDarkMode
+          ? AppColors.primaryBlue
+          : AppColors.primaryBlue, // Fond principal du Scaffold
       body: Column(
         children: [
           _buildProfileHeader(isDarkMode), // En-tête du profil
@@ -29,30 +37,46 @@ class ProfilePage extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(0.0),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start, // Alignement du contenu à gauche
+                      crossAxisAlignment: CrossAxisAlignment
+                          .start, // Alignement du contenu à gauche
                       children: [
                         _buildSectionTitle("Account Settings", isDarkMode),
-                        _buildProfileOption(context, Icons.person, "Personal Information", () {
+                        _buildProfileOption(
+                            context, Icons.person, "Personal Information", () {
                           Navigator.pushNamed(context, '/personalInformation');
                         }, isDarkMode),
-                        _buildProfileOption(context, Icons.lock, "Password & Security", () {
+                        _buildProfileOption(
+                            context, Icons.lock, "Password & Security", () {
                           Navigator.pushNamed(context, '/passwordSecurity');
                         }, isDarkMode),
-                        _buildProfileOption(context, Icons.medical_information, "Medical History", () {
+                        _buildProfileOption(context, Icons.medical_information,
+                            "Medical History", () {
                           Navigator.pushNamed(context, '/medicalHistory');
                         }, isDarkMode),
-                        _buildProfileOption(context, Icons.co_present, "Primary Caregiver", () {
+                        _buildProfileOption(
+                            context, Icons.co_present, "Primary Caregiver", () {
                           Navigator.pushNamed(context, '/primaryCaregiver');
                         }, isDarkMode),
-                      
                         _buildSectionTitle("Other", isDarkMode),
-                        _buildProfileOption(context, Icons.notifications, "Notifications Preferences", () {}, isDarkMode),
-                        _buildProfileOption(context, Icons.settings, "Settings", () {}, isDarkMode),
-                        _buildProfileOption(context, Icons.article_outlined, "Terms & Conditions", () {}, isDarkMode),
-                        _buildProfileOption(context, Icons.privacy_tip_outlined, "Privacy Policy", () {}, isDarkMode),
-                        _buildProfileOption(context, Icons.announcement_outlined, "Help & Assistance", () {}, isDarkMode),
+                        _buildProfileOption(context, Icons.notifications,
+                            "Notifications Preferences", () {}, isDarkMode),
+                        _buildProfileOption(context, Icons.settings, "Settings",
+                            () {}, isDarkMode),
+                        _buildProfileOption(context, Icons.article_outlined,
+                            "Terms & Conditions", () {}, isDarkMode),
+                        _buildProfileOption(context, Icons.privacy_tip_outlined,
+                            "Privacy Policy", () {}, isDarkMode),
+                        _buildProfileOption(
+                            context,
+                            Icons.announcement_outlined,
+                            "Help & Assistance",
+                            () {},
+                            isDarkMode),
                         const SizedBox(height: 20),
-                        _buildProfileOption(context, Icons.logout_outlined, "Log Out", () { _logout(context);}, isDarkMode),
+                        _buildProfileOption(
+                            context, Icons.logout_outlined, "Log Out", () {
+                          _logout(context);
+                        }, isDarkMode),
                         const SizedBox(height: 30),
                       ],
                     ),
@@ -79,7 +103,8 @@ class ProfilePage extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             "Jaydon Mango",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+            style: TextStyle(
+                fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           Text(
             "jaydonmango@gmail.com",
@@ -109,7 +134,8 @@ class ProfilePage extends StatelessWidget {
   }
 
   // 🔹 **Options du menu du profil**
-  Widget _buildProfileOption(BuildContext context, IconData icon, String title, VoidCallback onTap, bool isDarkMode) {
+  Widget _buildProfileOption(BuildContext context, IconData icon, String title,
+      VoidCallback onTap, bool isDarkMode) {
     return Card(
       color: isDarkMode ? Colors.grey[900] : Colors.white,
       elevation: 0,
@@ -117,9 +143,13 @@ class ProfilePage extends StatelessWidget {
         leading: Icon(icon, color: isDarkMode ? Colors.white : Colors.grey),
         title: Text(
           title,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: isDarkMode ? Colors.white : Colors.black),
+          style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: isDarkMode ? Colors.white : Colors.black),
         ),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+        trailing:
+            const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
         onTap: onTap,
       ),
     );
@@ -136,16 +166,34 @@ class ProfilePage extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.redAccent,
           padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
-        child: const Text("Log Out", style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold)),
+        child: const Text("Log Out",
+            style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+                fontWeight: FontWeight.bold)),
       ),
     );
   }
 
-  // 🔴 **Déconnexion**
-  void _logout(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Logging out...")));
-    // Ajoute ici l'action pour déconnecter l'utilisateur
+  // **Déconnexion** aamletha mariem w sala7t'ha ena la mzeya
+  void _logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Clear saved login details
+
+    // Show a logout confirmation
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text("Logged out successfully."),
+      duration: Duration(seconds: 2),
+    ));
+
+    // Navigate back to the LoginPage
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+      (route) => false, // Clears all previous screens from the stack
+    );
   }
 }
