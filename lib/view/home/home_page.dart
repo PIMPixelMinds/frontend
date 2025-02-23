@@ -56,10 +56,21 @@ class _HomePageState extends State<HomePage> {
     return GestureDetector(
       onHorizontalDragEnd: (details) {
         if (details.primaryVelocity! > 0) {
-          // Swiping Left → Navigate to MS News Feed ken theb right < 0 w raby ikadderni aala fe3el lkhir
+          // Swiping left (like Google Discover)
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => NewsFeedScreen()),
+            PageRouteBuilder(
+              pageBuilder: (_, __, ___) => NewsFeedScreen(),
+              transitionsBuilder: (_, animation, __, child) {
+                return SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(-1.0, 0.0), // Start from the right
+                    end: Offset.zero, // Move to the center
+                  ).animate(animation),
+                  child: child,
+                );
+              },
+            ),
           );
         }
       },

@@ -23,7 +23,13 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("MS News Feed")),
+      backgroundColor: Colors.grey[900],
+       appBar: AppBar(
+        title: const Text("MS News Feed", style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.grey[850], // Darker AppBar Background
+        iconTheme: const IconThemeData(color: Colors.white), // White back button
+      ),
+      
       body: FutureBuilder<List<dynamic>>(
         future: news,
         builder: (context, snapshot) {
@@ -60,8 +66,8 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
       itemBuilder: (context, index) => Padding(
         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         child: Shimmer.fromColors(
-          baseColor: Colors.grey[300]!,
-          highlightColor: Colors.grey[100]!,
+          baseColor: Colors.grey[800]!, // Darker shimmer effect
+          highlightColor: Colors.grey[600]!,
           child: Container(
             height: 100,
             decoration: BoxDecoration(
