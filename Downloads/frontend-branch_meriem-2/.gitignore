@@ -1,45 +1,97 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
+# --- macOS System Files ---
 .DS_Store
-.atom/
-.build/
-.buildlog/
-.history
-.svn/
-.swiftpm/
-migrate_working_dir/
+.AppleDouble
+.LSOverride
+**/.AppleDB
+**/.AppleDesktop
+**/.Spotlight-V100
+**/.Trashes
+**/ehthumbs.db
+**/Thumbs.db
 
-# IntelliJ related
+# --- Ignore system log files ---
+*.log
+*.swp
+
+# --- IntelliJ / Android Studio ---
 *.iml
 *.ipr
 *.iws
 .idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# --- VS Code ---
+.vscode/
 
-# Flutter/Dart/Pub related
+# --- Flutter / Dart / Pub ---
 **/doc/api/
-**/ios/Flutter/.last_build_id
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
-/build/
+migrate_working_dir/
 
-# Symbolication related
+# --- Xcode / iOS ---
+ios/Flutter/.last_build_id
+ios/.generated/
+ios/Pods/
+ios/.symlinks/
+ios/.swiftpm/
+ios/.dart_tool/
+ios/Flutter/Flutter.framework/
+ios/Flutter/App.framework/
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
+
+# --- Android ---
+android/app/debug/
+android/app/profile/
+android/app/release/
+android/.gradle/
+android/app/.cxx/
+android/app/build/
+android/local.properties
+android/key.properties
+android/.idea/
+
+# --- Build Artifacts ---
+build/
+**/build/
+android/app/build/
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/
+
+# --- Generated Files ---
+/**/gen/
+/generated/
+/android/app/src/main/res/mipmap-*/ic_launcher.png
+android/app/src/debug/res/mipmap-*/ic_launcher.png
+android/app/src/main/res/drawable/ic_launcher_background.xml
+android/app/src/main/res/drawable/ic_launcher_foreground.xml
+
+# --- Symbolication Related ---
 app.*.symbols
 
-# Obfuscation related
+# --- Obfuscation Related ---
 app.*.map.json
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# --- Miscellaneous ---
+**/.svn/
+**/.history/
+**/.metadata/
+**/.gradle/
+**/.tmp/
+**/temp/
+**/node_modules/
+
+# --- Package Manager Lockfiles (If Needed) ---
+**/yarn.lock
+**/package-lock.json
+
+# --- Ignore JetBrains IDEs / IntelliJ ---
+*.iml
+.idea/
+.gradle/
+out/
