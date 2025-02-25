@@ -1,4 +1,4 @@
-# --- macOS System Files ---
+# macOS System Files
 .DS_Store
 .AppleDouble
 .LSOverride
@@ -6,92 +6,79 @@
 **/.AppleDesktop
 **/.Spotlight-V100
 **/.Trashes
-**/ehthumbs.db
-**/Thumbs.db
+ehthumbs.db
+Thumbs.db
 
-# --- Ignore system log files ---
-*.log
-*.swp
-
-# --- IntelliJ / Android Studio ---
-*.iml
-*.ipr
-*.iws
-.idea/
-
-# --- VS Code ---
-.vscode/
-
-# --- Flutter / Dart / Pub ---
+# Flutter specific
 **/doc/api/
+**/ios/Flutter/.last_build_id
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
-migrate_working_dir/
+/build/
 
-# --- Xcode / iOS ---
-ios/Flutter/.last_build_id
-ios/.generated/
-ios/Pods/
-ios/.symlinks/
-ios/.swiftpm/
-ios/.dart_tool/
-ios/Flutter/Flutter.framework/
-ios/Flutter/App.framework/
-ios/Flutter/Flutter.podspec
-ios/Flutter/Generated.xcconfig
-ios/Flutter/ephemeral/
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+*.lock
+*.tmp
+*.pid
+*.seed
+*.gz
 
-# --- Android ---
-android/app/debug/
-android/app/profile/
-android/app/release/
-android/.gradle/
-android/app/.cxx/
-android/app/build/
-android/local.properties
-android/key.properties
-android/.idea/
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
 
-# --- Build Artifacts ---
-build/
-**/build/
-android/app/build/
-ios/Pods/
-ios/.symlinks/
-ios/Flutter/
+# VS Code
+.vscode/
 
-# --- Generated Files ---
-/**/gen/
-/generated/
-/android/app/src/main/res/mipmap-*/ic_launcher.png
-android/app/src/debug/res/mipmap-*/ic_launcher.png
-android/app/src/main/res/drawable/ic_launcher_background.xml
-android/app/src/main/res/drawable/ic_launcher_foreground.xml
+# Xcode
+*.mode1v3
+*.mode2v3
+*.pbxuser
+!default.pbxuser
+xcuserdata/
+*.xcscmblueprint
+*.xcworkspace
 
-# --- Symbolication Related ---
+# Android Studio
+*.jks
+*.keystore
+.android/
+.gradle/
+captures/
+output.json
+local.properties
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# Symbolication related
 app.*.symbols
 
-# --- Obfuscation Related ---
+# Obfuscation related
 app.*.map.json
 
-# --- Miscellaneous ---
-**/.svn/
-**/.history/
-**/.metadata/
-**/.gradle/
-**/.tmp/
-**/temp/
-**/node_modules/
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
 
-# --- Package Manager Lockfiles (If Needed) ---
-**/yarn.lock
-**/package-lock.json
+# Firebase / Google Services
+google-services.json
+firebase.json
 
-# --- Ignore JetBrains IDEs / IntelliJ ---
-*.iml
-.idea/
-.gradle/
-out/
+# CocoaPods
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.podspec
+ios/Flutter/ephemeral/
