@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Three.js Example</title>
+  <style>
+    /* Supprimer les marges et afficher le canvas en plein écran */
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- Charger les bibliothèques Three.js -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.0/examples/js/controls/OrbitControls.js"></script>
+
+  <script>
+    // Initialisation de la scène
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Ajouter une lumière directionnelle
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(10, 10, 10).normalize();
+    scene.add(light);
+
+    // Contrôles Orbit (pour faire pivoter le modèle)
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; // Ajoute une inertie au mouvement
+
+    // Fonction pour charger le modèle GLB
+    function loadModel(url) {
+      const loader = new THREE.GLTFLoader();
+      loader.load(url, function(gltf) {
+        model = gltf.scene;
+        scene.add(model);
+
+        // Centrer le modèle dans la scène
+        model.position.y = -1; // Ajustez selon votre modèle
+        model.scale.set(0.01, 0.01, 0.01); // Ajustez l'échelle selon votre modèle
+      }, undefined, function(error) {
+        console.error("Erreur lors du chargement du modèle :", error);
+      });
+    }
+
+    // Charger le modèle 3D (remplacez 'male.glb' par votre fichier GLB)
+    loadModel('assets/male.glb');
+
+    // Positionner la caméra
+    camera.position.z = 5;
+
+    // Raycasting pour détecter les clics sur le modèle
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    function onMouseClick(event) {
+      // Normaliser les coordonnées de la souris
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      // Calculer l'intersection entre le rayon et les objets de la scène
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(scene.children, true); // recursive = true
+
+      if (intersects.length > 0) {
+        const object = intersects[0].object;
+
+        // Vérifier si l'objet est une partie cliquable
+        if (object.material) {
+          object.material.color.set(Math.random() * 0xffffff); // Changer la couleur aléatoirement
+          console.log("Partie cliquée :", object.name || "Inconnu");
+        }
+      }
+    }
+
+    // Écouter les clics sur la scène
+    document.addEventListener('click', onMouseClick, false);
+
+    // Boucle d'animation
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Mettre à jour les contrôles Orbit
+      controls.update();
+
+      // Rendre la scène
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // Gérer les redimensionnements de la fenêtre
+    window.addEventListener('resize', onWindowResize, false);
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+  </script>
+</body>
+</html>
