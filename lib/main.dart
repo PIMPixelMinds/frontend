@@ -2,6 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:pim/firebase_options.dart';
+import 'package:pim/view/appointment/add_appointment.dart';
+import 'package:pim/view/appointment/appointment_view.dart';
+import 'package:pim/view/appointment/notification_page.dart';
 import 'package:pim/viewmodel/appointment_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'core/constants/app_colors.dart';
@@ -35,6 +38,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final FirebaseApi firebaseApi = FirebaseApi();
+    firebaseApi.initNotifications('whatever');
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AuthViewModel()),
@@ -59,10 +64,13 @@ class MyApp extends StatelessWidget {
           '/register': (context) => RegisterPage(),
           '/home': (context) => HomePage(),
           '/passwordSecurity': (context) => PasswordSecurityPage(),
-           '/personalInformation': (context) => PersonalInformationPage(),
-           '/medicalHistory': (context) => MedicalHistoryPage(),
+          '/personalInformation': (context) => PersonalInformationPage(),
+          '/medicalHistory': (context) => MedicalHistoryPage(),
           '/primaryCaregiver': (context) => PrimaryCaregiverPage(),
           //'/setupAccount': (context) => SetupAccountPage(),
+          '/addAppointment': (context) => AddAppointmentPage(),
+          '/displayAppointment': (context) => AppointmentPage(),
+          '/notification_screen': (context) => NotificationPage()
         },
       ),
     );
