@@ -3,11 +3,11 @@ import 'dart:io';
 class ApiConstants {
   static String get baseUrl {
     if (Platform.isAndroid) {
-      return "http://10.0.2.2:3000"; // Android Emulator
+      return "http://192.168.1.103:3000"; // Android Emulator
     } else if (Platform.isIOS) {
       return "http://127.0.0.1:3000"; // iOS Simulator
     } else {
-      return "http://192.168.1.106:3000"; // Physical Device (update with your local IP)
+      return "http://192.168.1.103:3000"; // Physical Device (update with your local IP)
     }
   }
 
@@ -20,4 +20,18 @@ class ApiConstants {
   static String get getProfileEndpoint => "$baseUrl/auth/profile";
   static String get updateProfileEndpoint => "$baseUrl/auth/update-profile";
   static String get completeProfileEndpoint => "$baseUrl/auth/completeProfile";
+
+
+// Ajout des nouvelles routes pour le module Medication
+  static String get createMedicationEndpoint => "$baseUrl/medications";
+  static String get getAllMedicationsEndpoint => "$baseUrl/medications";
+  static String get getMedicationsByFilterEndpoint => "$baseUrl/medications/filter";
+  static String  getMedicationEndpoint(String id) => "$baseUrl/medications/$id";
+  static String  updateMedicationEndpoint(String id) => "$baseUrl/medications/$id";
+  static String  deleteMedicationEndpoint(String id) => "$baseUrl/medications/$id";
+
+
+
+
+  
 }
