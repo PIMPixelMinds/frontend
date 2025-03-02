@@ -260,7 +260,7 @@ class _LoginPageState extends State<LoginPage> {
                           const SizedBox(height: 20),
                           _buildDividerWithText("Or continue with"),
                           const SizedBox(height: 15),
-                          _buildSocialButtons(context), // Ajout du contexte ici
+                          _buildSocialButtons(context), // Ajout du contexte ici,
                         ],
                       ),
                     ),
