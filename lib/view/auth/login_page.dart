@@ -1,10 +1,16 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:pim/core/constants/api_constants.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../viewmodel/auth_viewmodel.dart';
 import 'register_page.dart';
 //BECHA
 import 'package:shared_preferences/shared_preferences.dart';
+
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,6 +26,12 @@ class _LoginPageState extends State<LoginPage> {
   bool rememberMe = false;
   final _formKey = GlobalKey<FormState>();
   bool isFormValid = false;
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    clientId:
+        '734641894768-pp46h4htthmlmfnhqs0va4cupm4cpgr0.apps.googleusercontent.com', // Remplace par ton Client ID Android ou iOS depuis Google Cloud Console
+    scopes: ['email', 'profile'],
+  );
 
   @override
   void initState() {
@@ -70,6 +82,62 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       isFormValid = _formKey.currentState?.validate() ?? false;
     });
+  }
+
+// Méthode pour gérer la connexion Google
+  Future<void> _handleGoogleSignIn(BuildContext context) async {
+    final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+    try {
+      // Déclencher la connexion Google
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        // L'utilisateur a annulé la connexion
+        return;
+      }
+
+      // Obtenir le token d'authentification
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final String? idToken = googleAuth.idToken;
+
+      if (idToken == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Erreur : Token Google non obtenu")),
+        );
+        return;
+      }
+
+      // Envoyer le token au backend
+      final response = await http.post(
+        Uri.parse('${ApiConstants.baseUrl}/auth/google/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'token': idToken}),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        final String jwtToken = data['token'];
+
+        // Stocker le token dans SharedPreferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', jwtToken);
+        await prefs.setInt(
+            'tokenCreationTime', DateTime.now().millisecondsSinceEpoch);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Connexion Google réussie !")),
+        );
+
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        throw Exception(jsonDecode(response.body)['message'] ??
+            'Erreur lors de la connexion Google');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Erreur : $e")),
+      );
+    }
   }
 
   @override
@@ -192,7 +260,7 @@ class _LoginPageState extends State<LoginPage> {
                           const SizedBox(height: 20),
                           _buildDividerWithText("Or continue with"),
                           const SizedBox(height: 15),
-                          _buildSocialButtons(),
+                          _buildSocialButtons(context), // Ajout du contexte ici,
                         ],
                       ),
                     ),
@@ -292,11 +360,22 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _buildSocialButtons() {
+  Widget _buildSocialButtons(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildSocialButton("assets/google.png"),
+        GestureDetector(
+          onTap: () => _handleGoogleSignIn(context),
+          child: Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle, border: Border.all(color: Colors.grey)),
+            child: Center(
+              child: Image.asset("assets/google.png", width: 25, height: 25),
+            ),
+          ),
+        ),
         const SizedBox(width: 20),
         _buildSocialButton("assets/facebook.png"),
       ],

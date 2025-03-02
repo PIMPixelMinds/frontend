@@ -36,6 +36,7 @@ dependencies:
   path_provider: ^2.0.15
   animate_do: ^3.0.2
   fl_chart: 0.63.0
+  google_sign_in: ^6.2.1
   
 
 
@@ -47,8 +48,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   http: ^1.2.1
   shared_preferences: ^2.0.15  # Utilisez la dernière version
-
-
+  table_calendar: ^3.0.0
   local_auth: ^2.1.0
   provider: ^6.1.2
   font_awesome_flutter: ^10.8.0

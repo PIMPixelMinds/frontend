@@ -5,13 +5,14 @@ import '../data/repositories/auth_repository.dart';
 import '../view/auth/otp_verification_page.dart';
 import '../view/auth/reset_password_bottom_sheet.dart';
 
-class AuthViewModel extends ChangeNotifier { // 🔥 IMPORTANT
+class AuthViewModel extends ChangeNotifier {
+  // 🔥 IMPORTANT
   final AuthRepository _authRepository = AuthRepository();
   bool isLoading = false;
-    Map<String, dynamic>? userProfile; // Store the user profile data
+  Map<String, dynamic>? userProfile; // Store the user profile data
 
-
-  Future<void> login(BuildContext context, String email, String password) async {
+  Future<void> login(
+      BuildContext context, String email, String password) async {
     try {
       isLoading = true;
       notifyListeners();
@@ -24,6 +25,17 @@ class AuthViewModel extends ChangeNotifier { // 🔥 IMPORTANT
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString("token", data["token"]);
+      await prefs.setInt("tokenCreationTime",
+          DateTime.now().millisecondsSinceEpoch); // Stocke le timestamp
+      await prefs.setString("refreshToken",
+          data["refreshToken"] ?? ""); // Ajoutez un refresh token si fourni
+      print(
+          "Contenu de SharedPreferences : token=${prefs.getString('token')}, refreshToken=${prefs.getString('refreshToken')}, tokenCreationTime=${prefs.getInt('tokenCreationTime')}");
+// Logs pour déboguer
+      print("Token stocké : ${data["token"]}");
+      print(
+          "Refresh Token stocké : ${data["refreshToken"] ?? 'Aucun refresh token'}");
+      print("Timestamp de création : ${DateTime.now().millisecondsSinceEpoch}");
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Login successful!")),
@@ -40,6 +52,69 @@ class AuthViewModel extends ChangeNotifier { // 🔥 IMPORTANT
     }
   }
 
+  /********************************/
+  // Vérifie si le token est expiré (5 minutes = 300000 millisecondes)
+  Future<bool> isTokenExpired() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final tokenCreationTime = prefs.getInt("tokenCreationTime");
+    final token = prefs.getString("token");
+
+    if (tokenCreationTime == null || token == null) {
+      print("Token ou timestamp manquant : $token, $tokenCreationTime");
+      return true; // Token invalide ou inexistant
+    }
+
+    final currentTime = DateTime.now().millisecondsSinceEpoch;
+    final isExpired = (currentTime - tokenCreationTime) >
+        300000; // 5 minutes en millisecondes
+    print(
+        "Token expiration check - Créé à $tokenCreationTime, Maintenant $currentTime, Expiré : $isExpired");
+    return isExpired;
+  }
+
+  /********************************/
+  // Rafraîchit le token avec le refresh token
+  Future<void> refreshToken(BuildContext context) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final refreshToken = prefs.getString("refreshToken");
+
+      if (refreshToken == null || refreshToken.isEmpty) {
+        throw Exception("No refresh token available. Please log in again.");
+      }
+
+      final response = await _authRepository.refreshToken(refreshToken);
+
+      if (response.containsKey("token") &&
+          response.containsKey("refreshToken")) {
+        await prefs.setString("token", response["token"]);
+        await prefs.setString("refreshToken", response["refreshToken"]);
+        await prefs.setInt(
+            "tokenCreationTime", DateTime.now().millisecondsSinceEpoch);
+        print(
+            "Nouveau token : ${response["token"]}, Nouveau refresh token : ${response["refreshToken"]}");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Token refreshed successfully!")),
+        );
+      } else {
+        throw Exception("Failed to refresh token: Invalid response");
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+      print("Erreur refreshToken : $e");
+      // Rediriger vers la page de login si le rafraîchissement échoue
+      Navigator.pushReplacementNamed(context, "/login");
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
 /********************************/
 
   Future<void> registerUser(
@@ -47,7 +122,6 @@ class AuthViewModel extends ChangeNotifier { // 🔥 IMPORTANT
     String fullName,
     String email,
     String password,
-
   ) async {
     try {
       isLoading = true;
@@ -57,7 +131,6 @@ class AuthViewModel extends ChangeNotifier { // 🔥 IMPORTANT
         fullName: fullName,
         email: email,
         password: password,
-  
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -77,7 +150,8 @@ class AuthViewModel extends ChangeNotifier { // 🔥 IMPORTANT
 
 /********************************/
 
-  Future<void> sendForgotPasswordRequest(BuildContext context, String email) async {
+  Future<void> sendForgotPasswordRequest(
+      BuildContext context, String email) async {
     try {
       if (email.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -95,7 +169,7 @@ class AuthViewModel extends ChangeNotifier { // 🔥 IMPORTANT
         SnackBar(content: Text(response["message"])),
       );
 
-Navigator.pop(context);
+      Navigator.pop(context);
       // Ouvrir le bottom sheet de vérification OTP
       _showOTPBottomSheet(context, email);
     } catch (e) {
@@ -110,52 +184,52 @@ Navigator.pop(context);
 
 /********************************/
 
-Future<bool> verifyOtp(BuildContext context, String email, String otp) async {
-  try {
-    isLoading = true;
-    notifyListeners();
+  Future<bool> verifyOtp(BuildContext context, String email, String otp) async {
+    try {
+      isLoading = true;
+      notifyListeners();
 
-    final response = await _authRepository.verifyOtp(email, otp);
+      final response = await _authRepository.verifyOtp(email, otp);
 
-    if (response.containsKey("message") && response["message"] == "Code verified successfully") {
+      if (response.containsKey("message") &&
+          response["message"] == "Code verified successfully") {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("✅ OTP vérifié avec succès !")),
+        );
+
+        isLoading = false;
+        notifyListeners();
+        return true; // ✅ Retourner "true" si l'OTP est valide
+      }
+
+      isLoading = false;
+      notifyListeners();
+      return false; // ❌ Retourner "false" si l'OTP n'est pas reconnu
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("✅ OTP vérifié avec succès !")),
+        SnackBar(content: Text("❌ Erreur : $e")),
       );
 
       isLoading = false;
       notifyListeners();
-      return true; // ✅ Retourner "true" si l'OTP est valide
+      return false;
     }
-
-    isLoading = false;
-    notifyListeners();
-    return false; // ❌ Retourner "false" si l'OTP n'est pas reconnu
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("❌ Erreur : $e")),
-    );
-
-    isLoading = false;
-    notifyListeners();
-    return false;
   }
-}
 
-void _showResetPasswordBottomSheet(BuildContext context, String email) {
-  print("✅ Ouverture de ResetPasswordBottomSheet...");
+  void _showResetPasswordBottomSheet(BuildContext context, String email) {
+    print("✅ Ouverture de ResetPasswordBottomSheet...");
 
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-    ),
-    builder: (context) => ResetPasswordBottomSheet(email: email),
-  );
-}
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => ResetPasswordBottomSheet(email: email),
+    );
+  }
 
 /********************************/
-
 
   Future<void> resendOtp(BuildContext context, String email) async {
     try {
@@ -172,21 +246,22 @@ void _showResetPasswordBottomSheet(BuildContext context, String email) {
 
 /********************************/
 
-    void _showOTPBottomSheet(BuildContext context, String email) {
+  void _showOTPBottomSheet(BuildContext context, String email) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => OTPVerificationBottomSheet(email: email), // Ajout de l'email
+      builder: (context) =>
+          OTPVerificationBottomSheet(email: email), // Ajout de l'email
     );
   }
 
 /***********************************/
 
-
- Future<void> resetPassword(BuildContext context, String email, String newPassword) async {
+  Future<void> resetPassword(
+      BuildContext context, String email, String newPassword) async {
     try {
       isLoading = true;
       notifyListeners();
@@ -207,6 +282,7 @@ void _showResetPasswordBottomSheet(BuildContext context, String email) {
       notifyListeners();
     }
   }
+
   //************************************************/
   Future<void> getProfile(BuildContext context) async {
     try {
@@ -235,8 +311,9 @@ void _showResetPasswordBottomSheet(BuildContext context, String email) {
       notifyListeners();
     }
   }
+
 /************************************************************/
-Future<void> updateProfile({
+  Future<void> updateProfile({
     required BuildContext context,
     required String newName,
     required String newEmail,
@@ -282,6 +359,4 @@ Future<void> updateProfile({
   }
 
 /************************************************************/
-
-
 }

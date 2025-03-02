@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:pim/view/medication/medications_screen.dart';
 //Becha:
 import 'news_feed_screen.dart';
 import '../auth/profile_page.dart';
 import 'HealthTrackerPage.dart';
+
+import 'package:pim/viewmodel/medication_viewmodel.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -41,7 +45,7 @@ class _HomePageState extends State<HomePage> {
     const DashboardPage(),
     Center(child: Text("Appointements", style: TextStyle(fontSize: 22))),
     HealthTrackerPage(),
-    Center(child: Text("Medications", style: TextStyle(fontSize: 22))),
+    const MedicationsScreen(),
     ProfilePage(),
   ];
 

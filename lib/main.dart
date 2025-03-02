@@ -9,11 +9,15 @@ import 'view/auth/password_security_page.dart';
 import 'view/auth/perso_information_page.dart';
 import 'view/auth/primary_caregiver_page.dart';
 import 'view/auth/setup_account_page.dart';
+import 'view/medication/medications_screen.dart';
+import 'view/medication/medicine_info_screen.dart';
+import 'view/medication/add_reminder_screen.dart';
 import 'viewmodel/auth_viewmodel.dart';
+import 'viewmodel/medication_viewmodel.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool isLoggedIn = (prefs.getBool("rememberMe") ?? false) == true;
 
@@ -30,6 +34,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AuthViewModel()),
+        ChangeNotifierProvider(create: (context) => MedicationViewModel()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -52,6 +57,12 @@ class MyApp extends StatelessWidget {
           '/medicalHistory': (context) => const MedicalHistoryPage(),
           '/primaryCaregiver': (context) => const PrimaryCaregiverPage(),
           '/setupAccount': (context) => const SetupAccountPage(),
+          '/medications': (context) => const MedicationsScreen(),
+          '/medicineInfo': (context) {
+            final medicationId = ModalRoute.of(context)!.settings.arguments as String?;
+            return MedicineInfoScreen(medicationId: medicationId ?? '');
+          },
+          '/addReminder': (context) => const AddReminderScreen(),
         },
       ),
     );
