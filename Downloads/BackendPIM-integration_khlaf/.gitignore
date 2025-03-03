@@ -54,3 +54,25 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Exclure les fichiers spécifiques à macOS
+.DS_Store
+.Trash/
+.zsh_history
+.zsh_sessions/
+.zshrc
+.zprofile
+
+# Exclure les dossiers spécifiques à Android, iOS et Flutter
+.android/
+.cocoapods/
+.gradle/
+.flutter/
+.dart-tool/
+.dartServer/
+pubspec.lock
+pubspec.yaml
+ios/Pods/
+macos/Pods/
+windows/flutter/
+build/
