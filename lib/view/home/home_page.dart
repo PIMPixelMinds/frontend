@@ -7,6 +7,8 @@ import '../../core/constants/app_colors.dart';
 import '../auth/profile_page.dart';
 import '../body/body_page.dart';
 import '../tracking_log/HealthTrackerPage.dart';
+import 'Chatbot.dart';
+import 'dart:ui';
 
 void main() {
   runApp(const MyApp());
@@ -105,15 +107,12 @@ class _DashboardPageState extends State<DashboardPage> {
           IconButton(
             icon:
                 const Icon(Icons.notifications, size: 30, color: Colors.white),
-            onPressed: () {
-              // Ajoute ici la navigation vers les notifications
-            },
+            onPressed: () {},
           ),
           IconButton(
             icon:
                 const Icon(Icons.account_circle, size: 30, color: Colors.white),
             onPressed: () {
-              // Ajoute ici la navigation vers la page de profil
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => ProfilePage()),
@@ -130,13 +129,19 @@ class _DashboardPageState extends State<DashboardPage> {
             const SizedBox(height: 20),
             Column(
               children: [
-                CarouselSlider(
-                  items: _appointments
-                      .map((appt) => _appointmentCard(appt, isDarkMode))
-                      .toList(),
+                CarouselSlider.builder(
+                  itemCount: _appointments.length,
+                  itemBuilder: (context, index, realIndex) {
+                    return Opacity(
+                      opacity: _currentIndex == index ? 1.0 : 0.5,
+                      child: _appointmentCard(_appointments[index], isDarkMode),
+                    );
+                  },
                   options: CarouselOptions(
-                    height: 120,
+                    height: 200, // Increased card height
                     enlargeCenterPage: true,
+                    viewportFraction:
+                        0.5, // Shows more of previous and next items
                     onPageChanged: (index, reason) {
                       setState(() => _currentIndex = index);
                     },
@@ -161,13 +166,56 @@ class _DashboardPageState extends State<DashboardPage> {
               ],
             ),
             const SizedBox(height: 30),
-            _activityChartCard(isDarkMode),
+            _activityChartCard(),
             const SizedBox(height: 30),
-            _cardsRow(_temperatureCard(isDarkMode), _heartRateCard(isDarkMode)),
+            _cardsRow(_temperatureCard(), _heartRateCard()),
             const SizedBox(height: 30),
-            _cardsRow(_medicationCard(isDarkMode), _dailyCaresCard(isDarkMode)),
+            _cardsRow(_medicationCard(), _dailyCaresCard()),
           ],
         ),
+      ),
+      // Replace the current onPressed method of the FloatingActionButton
+      floatingActionButton: Stack(
+        children: [
+          // Blur effect behind the button
+          Positioned(
+            bottom: 10, // Adjust position if needed
+            right: 10, // Adjust position if needed
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(40), // Circular blur area
+              child: BackdropFilter(
+                filter:
+                    ImageFilter.blur(sigmaX: 10, sigmaY: 10), // Blur intensity
+                child: Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.white
+                        .withOpacity(0.2), // Light transparent white
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Floating Action Button with Chatbot Navigation
+          Positioned(
+            bottom: 15, // Adjust position to align with blur
+            right: 15, // Adjust position to align with blur
+            child: FloatingActionButton(
+              onPressed: () {
+                showChatbot(context); // Show the chatbot bottom sheet
+              },
+              backgroundColor: Colors.white, // Ensure good contrast
+              child: Image.asset(
+                'assets/chatbot_icon.png', // Replace with your chatbot logo
+                width: 40,
+                height: 40,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -207,59 +255,207 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _activityChartCard(bool isDarkMode) {
+  Widget _activityChartCard() {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       elevation: 12,
-      color: isDarkMode ? Colors.black : Colors.white,
+      color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: SizedBox(
-          height: 200,
-          child: BarChart(BarChartData(
-            borderData: FlBorderData(show: false),
-            barGroups: List.generate(7, (index) {
-              return BarChartGroupData(
-                x: index,
-                barRods: [
-                  BarChartRodData(
-                    toY: (5 + index * 2).toDouble(),
-                    color:
-                        isDarkMode ? AppColors.primaryBlue : Colors.lightBlue,
-                    width: 12,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("Activity (Last 7 Days)",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 200,
+              child: BarChart(
+                BarChartData(
+                  borderData: FlBorderData(show: false),
+                  titlesData: FlTitlesData(
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 30,
+                        getTitlesWidget: (double value, TitleMeta meta) {
+                          const days = [
+                            'Mon',
+                            'Tue',
+                            'Wed',
+                            'Thu',
+                            'Fri',
+                            'Sat',
+                            'Sun'
+                          ];
+                          return Text(days[value.toInt()],
+                              style: const TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.bold));
+                        },
+                      ),
+                    ),
                   ),
-                ],
-              );
-            }),
-          )),
+                  barGroups: List.generate(7, (index) {
+                    return BarChartGroupData(
+                      x: index,
+                      barRods: [
+                        BarChartRodData(
+                            toY: (5 + index * 2).toDouble(),
+                            color: Colors.blue,
+                            width: 12),
+                      ],
+                    );
+                  }),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _temperatureCard(bool isDarkMode) =>
-      _infoCard("Temperature", Icons.thermostat_outlined, "36.5°C", isDarkMode);
-  Widget _heartRateCard(bool isDarkMode) => _infoCard(
-      "Heart Rate", Icons.monitor_heart_outlined, "75 bpm", isDarkMode);
-  Widget _medicationCard(bool isDarkMode) => _infoCard(
-      "Medication", Icons.medication_outlined, "80% Taken", isDarkMode);
-  Widget _dailyCaresCard(bool isDarkMode) => _infoCard(
-      "Daily Care", Icons.check_circle_outline, "Completed: 80%", isDarkMode);
+  Widget _temperatureCard() {
+    return _genericCard("Temperature", Icons.thermostat, "36.5°C");
+  }
 
-  Widget _infoCard(String title, IconData icon, String value, bool isDarkMode) {
+  Widget _heartRateCard() {
+    return _genericCard("Heart Rate", Icons.favorite, "75 bpm");
+  }
+
+  Widget _medicationCard() {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       elevation: 12,
-      color: isDarkMode ? AppColors.primaryBlue : Colors.white,
-      child: ListTile(
-        leading: Icon(icon,
-            color: isDarkMode ? Colors.white : AppColors.primaryBlue),
-        title: Text(title,
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: isDarkMode ? Colors.white : Colors.black)),
-        subtitle: Text(value,
-            style: TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(12), // Even smaller padding
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Medication",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16), // Smaller font size
+            ),
+            const SizedBox(height: 8), // Reduced spacing
+            Center(
+              child: SizedBox(
+                height: 80, // Even smaller size for the pie chart
+                width: 80, // Even smaller size for the pie chart
+                child: PieChart(
+                  PieChartData(
+                    sectionsSpace: 0, // No space between sections
+                    centerSpaceRadius: 20, // Smaller center hole
+                    sections: [
+                      PieChartSectionData(
+                        value: 80, // 80% taken
+                        color: Colors.blue,
+                        radius: 30, // Smaller radius for the sections
+                        title: '80%', // Display text inside the section
+                        titleStyle: const TextStyle(
+                          fontSize: 12, // Smaller font size
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      PieChartSectionData(
+                        value: 20, // 20% remaining
+                        color: Colors.grey[500]!,
+                        radius: 30, // Smaller radius for the sections
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 11), // Reduced spacing
+            // Legend for "Taken" (blue)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 8, // Even smaller size for the blue circle
+                  height: 8, // Even smaller size for the blue circle
+                  decoration: const BoxDecoration(
+                    color: Colors.blue,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 4), // Reduced spacing
+                const Text(
+                  "Taken", // Text to display
+                  style: TextStyle(
+                      fontSize: 10, color: Colors.blue), // Smaller font size
+                ),
+              ],
+            ),
+            const SizedBox(height: 4), // Spacing between the two legends
+            // Legend for "Pending" (grey)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 8, // Even smaller size for the grey circle
+                  height: 8, // Even smaller size for the grey circle
+                  decoration: BoxDecoration(
+                    color: Colors.grey[500], // Grey color for pending
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 4), // Reduced spacing
+                const Text(
+                  "Pending", // Text to display
+                  style: TextStyle(
+                      fontSize: 10,
+                      color: Color.fromARGB(
+                          255, 107, 106, 106)), // Smaller font size
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _dailyCaresCard() {
+    return _genericCard("Daily Care", Icons.health_and_safety, "Completed: 80%",
+        showButton: false);
+  }
+
+  Widget _genericCard(String title, IconData icon, String value,
+      {bool showButton = false}) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      elevation: 12,
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                Icon(icon, size: 40, color: Colors.blue),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(value,
+                      style: const TextStyle(
+                          fontSize: 11, fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.ellipsis),
+                ),
+              ],
+            ),
+            if (showButton)
+              ElevatedButton(onPressed: () {}, child: const Text("Reschedule")),
+          ],
+        ),
       ),
     );
   }
