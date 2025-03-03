@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:pim/view/appointment/appointment_view.dart';
+import 'package:pim/view/medication/medications_screen.dart';
 import '../../core/constants/app_colors.dart';
 import '../auth/profile_page.dart';
 import '../body/body_page.dart';
@@ -43,7 +44,7 @@ class _HomePageState extends State<HomePage> {
     AppointmentPage(),
     BodyPage(),
     HealthTrackerPage(),
-    Center(child: Text("Medications", style: TextStyle(fontSize: 22))),
+    const MedicationsScreen(),
   ];
 
   void _onItemTapped(int index) {

@@ -5,7 +5,11 @@ import 'package:pim/firebase_options.dart';
 import 'package:pim/view/appointment/add_appointment.dart';
 import 'package:pim/view/appointment/appointment_view.dart';
 import 'package:pim/view/appointment/notification_page.dart';
+import 'package:pim/view/medication/add_reminder_screen.dart';
+import 'package:pim/view/medication/medications_screen.dart';
+import 'package:pim/view/medication/medicine_info_screen.dart';
 import 'package:pim/viewmodel/appointment_viewmodel.dart';
+import 'package:pim/viewmodel/medication_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'core/constants/app_colors.dart';
 import 'view/appointment/firebase_api.dart';
@@ -46,8 +50,10 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => AuthViewModel()),
         ChangeNotifierProvider(create: (_) => AppointmentViewModel()),
-        ChangeNotifierProvider(create: (context) => HealthTrackerViewModel()), // 🔥 Ajout de AuthViewModel
-
+        ChangeNotifierProvider(
+            create: (context) =>
+                HealthTrackerViewModel()), // 🔥 Ajout de AuthViewModel
+        ChangeNotifierProvider(create: (context) => MedicationViewModel()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -74,7 +80,13 @@ class MyApp extends StatelessWidget {
           //'/setupAccount': (context) => SetupAccountPage(),
           '/addAppointment': (context) => AddAppointmentPage(),
           '/displayAppointment': (context) => AppointmentPage(),
-          '/notification_screen': (context) => NotificationPage()
+          '/notification_screen': (context) => NotificationPage(),
+          '/medications': (context) => const MedicationsScreen(),
+          '/medicineInfo': (context) {
+            final medicationId = ModalRoute.of(context)!.settings.arguments as String?;
+            return MedicineInfoScreen(medicationId: medicationId ?? '');
+          },
+          '/addReminder': (context) => const AddReminderScreen(),
         },
       ),
     );

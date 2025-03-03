@@ -61,6 +61,21 @@ dependencies:
   provider: ^6.1.2
   font_awesome_flutter: ^10.8.0
 
+  #MEDICATION
+  
+  
+ 
+  google_sign_in: ^6.2.1
+  url_launcher: ^6.1.14
+  shimmer: ^3.0.0
+  webview_flutter: ^4.2.2 
+  
+  
+  table_calendar: ^3.0.0
+  
+
+  
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

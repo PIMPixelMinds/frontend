@@ -194,13 +194,19 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildSocialButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _buildSocialButton("assets/google.png"),
-      ],
-    );
-  }
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      GestureDetector(
+        onTap: () {
+          final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+          authViewModel.googleSignIn(context); // Appeler la méthode Google sign-in
+        },
+        child: _buildSocialButton("assets/google.png"),
+      ),
+    ],
+  );
+}
 
   Widget _buildSocialButton(String asset) {
     return Container(

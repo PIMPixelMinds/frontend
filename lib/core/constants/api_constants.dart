@@ -1,5 +1,5 @@
 class ApiConstants {
-  static const String baseUrl = "http://192.168.1.5:3000";
+  static const String baseUrl = "http://192.168.1.17:3000";
   static const String loginEndpoint = "$baseUrl/auth/login";
   static const String signupEndpoint = "$baseUrl/auth/signup";
   static const String forgotPasswordEndpoint = "$baseUrl/auth/forgot-password";
@@ -27,4 +27,14 @@ class ApiConstants {
       "$baseUrl/appointment/countAppointments";
   static const String fetchCompletedAppointmentsEndpoint =
       "$baseUrl/appointment/completedAppointments";
+
+// Ajout des nouvelles routes pour le module Medication
+  static String get createMedicationEndpoint => "$baseUrl/medications";
+  static String get getAllMedicationsEndpoint => "$baseUrl/medications";
+  static String get getMedicationsByFilterEndpoint => "$baseUrl/medications/filter";
+  static String  getMedicationEndpoint(String id) => "$baseUrl/medications/$id";
+  static String  updateMedicationEndpoint(String id) => "$baseUrl/medications/$id";
+  static String  deleteMedicationEndpoint(String id) => "$baseUrl/medications/$id";
+
+
 }
