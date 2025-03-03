@@ -56,9 +56,9 @@ class _ProfilePageState extends State<ProfilePage> {
       decoration: BoxDecoration(
         color: isDarkMode ? AppColors.primaryBlue : AppColors.primaryBlue,
       ),
-      child: Column(
+      child: const Column(
         children: [
-          const SizedBox(height: 10),
+          SizedBox(height: 10),
           Text(
             userName.toUpperCase(), // Use the dynamic user name
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.white),

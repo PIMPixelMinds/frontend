@@ -142,6 +142,7 @@ class _LoginPageState extends State<LoginPage> {
         Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
         const SizedBox(height: 5),
         TextFormField(
+<<<<<<< Updated upstream
   controller: controller,
   obscureText: isPassword ? obscureText : false,
   autovalidateMode: AutovalidateMode.onUserInteraction, // ✅ Afficher l'erreur uniquement après interaction
@@ -176,6 +177,64 @@ class _LoginPageState extends State<LoginPage> {
     return null; // ✅ Ne rien afficher si l'utilisateur n'a pas encore écrit
   },
 ),
+=======
+          controller: controller,
+          obscureText: isPassword ? obscureText : false,
+          decoration: InputDecoration(
+            hintText: hint,
+            filled: true,
+            fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(
+                color: isDarkMode ? Colors.grey[600]! : Colors.grey[400]!,
+                width: 1,
+              ),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(
+                color: AppColors.error,
+                width: 1.5,
+              ),
+            ),
+            suffixIcon: isPassword
+                ? IconButton(
+                    icon: Icon(
+                        obscureText ? Icons.visibility_off : Icons.visibility,
+                        color: Colors.grey),
+                    onPressed: () {
+                      setState(() {
+                        obscureText = !obscureText;
+                      });
+                    },
+                  )
+                : null,
+            errorStyle: const TextStyle(
+              color: AppColors.error,
+              fontSize: 14.0,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "This field is required";
+            }
+            if (isPassword && value.length < 5) {
+              return "Password must be at least 6 characters long.";
+            }
+            if (!isPassword &&
+                !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+              return "Enter a valid email address.";
+            }
+            return null;
+          },
+        ),
+>>>>>>> Stashed changes
       ],
     );
   }

@@ -70,9 +70,9 @@ class _MedicalHistoryPageState extends State<MedicalHistoryPage> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 40),
       color: AppColors.primaryBlue,
-      child: Column(
+      child: const Column(
         children: [
-          const SizedBox(height: 10),
+          SizedBox(height: 10),
          
         ],
       ),
@@ -200,7 +200,7 @@ class _MedicalHistoryPageState extends State<MedicalHistoryPage> {
                 const SizedBox(width: 8),
                 Text(
                   selectedFiles.isEmpty ? "Select File" : selectedFiles.join(", "),
-                  style: TextStyle(color: Colors.grey),
+                  style: const TextStyle(color: Colors.grey),
                   overflow: TextOverflow.ellipsis,
                 ),
               ],

@@ -34,7 +34,7 @@ class SetupCompletePage extends StatelessWidget {
               onPressed: () {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
+                  MaterialPageRoute(builder: (context) => const HomePage()),
                   (route) => false, // Supprime tout l'historique de navigation
                 );
               },

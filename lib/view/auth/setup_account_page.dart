@@ -82,7 +82,7 @@ class _SetupAccountPageState extends State<SetupAccountPage> {
                 // Navigate to the next page
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SetupContactPage()),
+                  MaterialPageRoute(builder: (context) => const SetupContactPage()),
                 );
               },
               style: ElevatedButton.styleFrom(

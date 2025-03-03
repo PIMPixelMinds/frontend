@@ -23,6 +23,7 @@ class AuthRepository {
     }
   }
 
+<<<<<<< Updated upstream
 /********************************/
   Future<Map<String, dynamic>?> googleLogin(String googleToken) async {
     final url = Uri.parse('${ApiConstants.baseUrl}/auth/google/login');
@@ -62,6 +63,9 @@ class AuthRepository {
   }
 
   /********************************/
+=======
+  /// *****************************
+>>>>>>> Stashed changes
 
   Future<Map<String, dynamic>?> registerUser({
     required String fullName,
@@ -91,7 +95,7 @@ class AuthRepository {
       throw Exception("Error: $e");
     }
   }
-/********************************/
+/// *****************************
 
   Future<Map<String, dynamic>> sendForgotPasswordRequest(String email) async {
     final url = Uri.parse(ApiConstants.forgotPasswordEndpoint);
@@ -110,7 +114,7 @@ class AuthRepository {
     }
   }
 
-/********************************/
+/// *****************************
 
   Future<Map<String, dynamic>> verifyOtp(String email, String otp) async {
     final url = Uri.parse(ApiConstants.verifyOtpEndpoint);
@@ -140,7 +144,7 @@ class AuthRepository {
     }
   }
 
-/********************************/
+/// *****************************
 
   Future<void> resendOtp(String email) async {
     final url = Uri.parse("${ApiConstants.resendOtpEndpoint}/$email");
@@ -154,8 +158,12 @@ class AuthRepository {
       throw Exception("Failed to resend OTP");
     }
   }
+<<<<<<< Updated upstream
 
   /***************************************/
+=======
+  /// ************************************
+>>>>>>> Stashed changes
   Future<void> resetPassword(String email, String newPassword) async {
     final url = Uri.parse("${ApiConstants.resetPasswordEndpoint}/$email");
 
@@ -174,7 +182,7 @@ class AuthRepository {
           jsonDecode(response.body)["message"] ?? "Failed to reset password");
     }
   }
-  /********************************************/
+  /// *****************************************
 
   Future<Map<String, dynamic>> getProfile(String token) async {
     final url = Uri.parse(ApiConstants.getProfileEndpoint);

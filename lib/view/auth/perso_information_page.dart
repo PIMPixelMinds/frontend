@@ -80,6 +80,7 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
   }
 
   // 🔹 **Méthode pour ouvrir le Date Picker**
+<<<<<<< Updated upstream
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -100,6 +101,27 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
               style: TextButton.styleFrom(
                 foregroundColor: AppColors.primaryBlue,
               ),
+=======
+Future<void> _selectDate(BuildContext context) async {
+  final DateTime? pickedDate = await showDatePicker(
+    context: context,
+    initialDate: selectedDate ?? DateTime.now(),
+    firstDate: DateTime(1900),
+    lastDate: DateTime.now(),
+    builder: (context, child) {
+      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+      return Theme(
+        data: ThemeData(
+          colorScheme: const ColorScheme.light(
+            primary: AppColors.primaryBlue, // 🔹 Couleur de la sélection
+            onPrimary: Colors.white, // 🔹 Texte sur le bouton OK
+            surface: Colors.white, // 🔹 Fond du DatePicker
+            onSurface: Colors.black, // 🔹 Texte des jours
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.primaryBlue, // 🔹 Couleur des boutons OK/Annuler
+>>>>>>> Stashed changes
             ),
           ),
           child: child!,
@@ -271,6 +293,7 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
         Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
         const SizedBox(height: 5),
         TextFormField(
+<<<<<<< Updated upstream
           controller: controller,
           decoration: InputDecoration(
             hintText: hint,
@@ -313,6 +336,50 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
             return null;
           },
         ),
+=======
+  controller: controller,
+  decoration: InputDecoration(
+    hintText: hint,
+    filled: true,
+    fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide.none,
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide(
+        color: isDarkMode ? Colors.grey[600]! : Colors.grey[400]!,
+        width: 1,
+      ),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: const BorderSide(
+        color: AppColors.error,
+        width: 1.5,
+      ),
+    ),
+    errorStyle: const TextStyle(
+      color: AppColors.error,
+      fontSize: 14.0,
+      fontWeight: FontWeight.w500,
+    ),
+  ),
+  validator: (value) {
+    if (value == null || value.isEmpty) {
+      return "This field is required";
+    }
+    if (isPassword && value.length < 6) {
+      return "Password must be at least 6 characters long.";
+    }
+    if (!isPassword && !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+      return "Enter a valid email address.";
+    }
+    return null;
+  },
+),
+>>>>>>> Stashed changes
       ],
     );
   }

@@ -56,7 +56,7 @@ class _SetupCaregiverPageState extends State<SetupCaregiverPage> {
                   onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SetupCompletePage()),
+                  MaterialPageRoute(builder: (context) => const SetupCompletePage()),
                 );
               },
                   style: ElevatedButton.styleFrom(

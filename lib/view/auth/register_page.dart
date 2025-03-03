@@ -98,7 +98,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 const Text("I already have an account,", style: TextStyle(color: Colors.grey)),
                 TextButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
                   },
                   child: const Text("Login", style: TextStyle(color: AppColors.primaryBlue)),
                 ),

@@ -56,7 +56,7 @@ class _SetupContactPageState extends State<SetupContactPage> {
                   onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SetupMedicalPage()),
+                  MaterialPageRoute(builder: (context) => const SetupMedicalPage()),
                 );
               },
                   style: ElevatedButton.styleFrom(

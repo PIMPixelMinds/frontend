@@ -129,11 +129,11 @@ class _OTPVerificationBottomSheetState
                       counterText: "",
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: AppColors.primaryBlue),
+                        borderSide: const BorderSide(color: AppColors.primaryBlue),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: AppColors.primaryBlue, width: 2),
+                        borderSide: const BorderSide(color: AppColors.primaryBlue, width: 2),
                       ),
                     ),
                   ),
@@ -147,7 +147,7 @@ class _OTPVerificationBottomSheetState
           // ✅ Compteur avec des couleurs adaptées
           Text(
             formattedTime,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primaryBlue),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primaryBlue),
           ),
           const SizedBox(height: 10),
 

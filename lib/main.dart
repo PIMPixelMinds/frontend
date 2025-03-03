@@ -40,7 +40,13 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+<<<<<<< Updated upstream
   const MyApp({super.key});
+=======
+  final bool isLoggedIn;
+
+  const MyApp({super.key, required this.isLoggedIn});
+>>>>>>> Stashed changes
 
   @override
   Widget build(BuildContext context) {
