@@ -50,7 +50,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
               return NewsCard(
                 title: article['title'],
                 imageUrl: article['image'] ?? '',
-                summary: article['summary'] ?? "No summary available",
+                
                 link: article['link'],
               );
             },

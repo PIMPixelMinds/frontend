@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
+import '../../viewmodel/auth_viewmodel.dart'; // Import your AuthViewModel
 
 class PersonalInformationPage extends StatefulWidget {
   const PersonalInformationPage({super.key});
@@ -9,12 +11,13 @@ class PersonalInformationPage extends StatefulWidget {
 }
 
 class _PersonalInformationPageState extends State<PersonalInformationPage> {
-  String? selectedGender; 
+  String? selectedGender;
   final TextEditingController fullNameController = TextEditingController();
   DateTime? selectedDate;
 
   @override
   Widget build(BuildContext context) {
+    final authViewModel = Provider.of<AuthViewModel>(context);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -29,80 +32,87 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
       ),
-      body: Column(
+      body: Stack(
         children: [
-          _buildProfileHeader(),
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: isDarkMode ? Colors.grey[900] : Colors.white,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
+          Column(
+            children: [
+              _buildProfileHeader(),
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? Colors.grey[900] : Colors.white,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildTextField("Full Name", "Enter your full name", fullNameController, false, isDarkMode),
+                        const SizedBox(height: 15),
+                        const Text(
+                          "Birthday",
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 8),
+                        _buildDatePickerField(isDarkMode),
+                        const SizedBox(height: 15),
+                        _buildGenderSelector(isDarkMode),
+                        const SizedBox(height: 30),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildTextField("Full Name", "Enter your full name", fullNameController, false, isDarkMode),
-                    const SizedBox(height: 15),
-                    const Text(
-          "Birthday",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-        ),
-        const SizedBox(height: 8),
-                    _buildDatePickerField(isDarkMode),  // 🔹 Utilisation du champ DatePicker
-                    const SizedBox(height: 15),
-                    _buildGenderSelector(isDarkMode),
-                    const SizedBox(height: 30),
-                  ],
-                ),
-              ),
-            ),
+              _buildBottomButton(isDarkMode, authViewModel),
+            ],
           ),
-          _buildBottomButton(isDarkMode), // Bouton en bas
+          if (authViewModel.isLoading)
+            const Center(
+              child: CircularProgressIndicator(),
+            ),
         ],
       ),
     );
   }
 
   // 🔹 **Méthode pour ouvrir le Date Picker**
-Future<void> _selectDate(BuildContext context) async {
-  final DateTime? pickedDate = await showDatePicker(
-    context: context,
-    initialDate: selectedDate ?? DateTime.now(),
-    firstDate: DateTime(1900),
-    lastDate: DateTime.now(),
-    builder: (context, child) {
-      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-      return Theme(
-        data: ThemeData(
-          colorScheme: ColorScheme.light(
-            primary: AppColors.primaryBlue, // 🔹 Couleur de la sélection
-            onPrimary: Colors.white, // 🔹 Texte sur le bouton OK
-            surface: Colors.white, // 🔹 Fond du DatePicker
-            onSurface: Colors.black, // 🔹 Texte des jours
-          ),
-          textButtonTheme: TextButtonThemeData(
-            style: TextButton.styleFrom(
-              foregroundColor: AppColors.primaryBlue, // 🔹 Couleur des boutons OK/Annuler
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      builder: (context, child) {
+        final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+        return Theme(
+          data: ThemeData(
+            colorScheme: ColorScheme.light(
+              primary: AppColors.primaryBlue,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: Colors.black,
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.primaryBlue,
+              ),
             ),
           ),
-        ),
-        child: child!,
-      );
-    },
-  );
+          child: child!,
+        );
+      },
+    );
 
-  if (pickedDate != null && pickedDate != selectedDate) {
-    setState(() {
-      selectedDate = pickedDate;
-    });
+    if (pickedDate != null && pickedDate != selectedDate) {
+      setState(() {
+        selectedDate = pickedDate;
+      });
+    }
   }
-}
-
 
   // 🔹 **Champ DatePicker pour le Birthday**
   Widget _buildDatePickerField(bool isDarkMode) {
@@ -117,8 +127,11 @@ Future<void> _selectDate(BuildContext context) async {
                 : "Select your birthday",
             filled: true,
             fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[200],
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
-            suffixIcon: const Icon(Icons.calendar_today, color: Colors.grey),  // Icône de calendrier
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            suffixIcon: const Icon(Icons.calendar_today, color: Colors.grey),
           ),
           style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
         ),
@@ -154,22 +167,42 @@ Future<void> _selectDate(BuildContext context) async {
   }
 
   // 🔵 **Bouton de sauvegarde en bas**
-  Widget _buildBottomButton(bool isDarkMode) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      color: isDarkMode ? Colors.grey[900] : Colors.white,
-      child: ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryBlue,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+  Widget _buildBottomButton(bool isDarkMode, AuthViewModel authViewModel) {
+  return Container(
+    width: double.infinity,
+    padding: const EdgeInsets.all(16),
+    color: isDarkMode ? Colors.grey[900] : Colors.white,
+    child: ElevatedButton(
+      onPressed: () async {
+        if (fullNameController.text.isEmpty || selectedDate == null || selectedGender == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Please fill all fields")),
+          );
+          return;
+        }
+
+        await authViewModel.updateProfile(
+          context: context,
+          newName: fullNameController.text,
+          newBirthday: selectedDate!.toIso8601String(),
+          newGender: selectedGender == "Male" ? "male" : "female",
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Profile updated successfully!")),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.primaryBlue,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
         ),
-        child: const Text("Edit", style: TextStyle(fontSize: 16, color: Colors.white)),
       ),
-    );
-  }
+      child: const Text("Edit", style: TextStyle(fontSize: 16, color: Colors.white)),
+    ),
+  );
+}
 
   // 🟣 **Sélecteur de genre avec deux boutons**
   Widget _buildGenderSelector(bool isDarkMode) {
@@ -230,7 +263,6 @@ Future<void> _selectDate(BuildContext context) async {
     );
   }
 
-
   // 🟡 **Champs de texte stylisés**
   Widget _buildTextField(String label, String hint, TextEditingController controller, bool isPassword, bool isDarkMode) {
     return Column(
@@ -239,50 +271,49 @@ Future<void> _selectDate(BuildContext context) async {
         Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
         const SizedBox(height: 5),
         TextFormField(
-  controller: controller,
-  decoration: InputDecoration(
-    hintText: hint,
-    filled: true,
-    fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[200],
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide.none,
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(
-        color: isDarkMode ? Colors.grey[600]! : Colors.grey[400]!,
-        width: 1,
-      ),
-    ),
-    errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(
-        color: AppColors.error,
-        width: 1.5,
-      ),
-    ),
-    errorStyle: TextStyle(
-      color: AppColors.error,
-      fontSize: 14.0,
-      fontWeight: FontWeight.w500,
-    ),
-  ),
-  validator: (value) {
-    if (value == null || value.isEmpty) {
-      return "This field is required";
-    }
-    if (isPassword && value.length < 6) {
-      return "Password must be at least 6 characters long.";
-    }
-    if (!isPassword && !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-      return "Enter a valid email address.";
-    }
-    return null;
-  },
-),
+          controller: controller,
+          decoration: InputDecoration(
+            hintText: hint,
+            filled: true,
+            fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(
+                color: isDarkMode ? Colors.grey[600]! : Colors.grey[400]!,
+                width: 1,
+              ),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(
+                color: AppColors.error,
+                width: 1.5,
+              ),
+            ),
+            errorStyle: TextStyle(
+              color: AppColors.error,
+              fontSize: 14.0,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "This field is required";
+            }
+            if (isPassword && value.length < 6) {
+              return "Password must be at least 6 characters long.";
+            }
+            if (!isPassword && !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+              return "Enter a valid email address.";
+            }
+            return null;
+          },
+        ),
       ],
     );
   }
-
 }

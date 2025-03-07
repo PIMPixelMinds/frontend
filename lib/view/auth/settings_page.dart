@@ -15,12 +15,12 @@ class SettingsPage extends StatelessWidget {
             ListTile(
               title: const Text("Setup Account"),
               leading: const Icon(Icons.account_circle),
-              onTap: () {
+              /*onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SetupAccountPage()),
+                  //MaterialPageRoute(builder: (context) => SetupAccountPage()),
                 );
-              },
+              },*/
             ),
           ],
         ),

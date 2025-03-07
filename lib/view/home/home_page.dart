@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:pim/view/appointment/appointment_view.dart';
 import 'package:pim/view/medication/medications_screen.dart';
-//Becha:
-import 'news_feed_screen.dart';
+import '../../core/constants/app_colors.dart';
 import '../auth/profile_page.dart';
-import 'HealthTrackerPage.dart';
+import '../body/body_page.dart';
+import '../tracking_log/HealthTrackerPage.dart';
+import 'Chatbot.dart';
+import 'dart:ui';
 
-import 'package:pim/viewmodel/medication_viewmodel.dart';
-
+import 'news_feed_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,12 +24,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        textTheme: const TextTheme(
-          bodyMedium: TextStyle(fontSize: 16, color: Colors.black),
-        ),
-      ),
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: ThemeMode.system,
       home: const HomePage(),
     );
   }
@@ -40,13 +41,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-
-  static final List<Widget> _pages = <Widget>[
+  final List<Widget> _pages = <Widget>[
     const DashboardPage(),
-    Center(child: Text("Appointements", style: TextStyle(fontSize: 22))),
+    AppointmentPage(),
+    BodyPage(),
     HealthTrackerPage(),
     const MedicationsScreen(),
-    ProfilePage(),
   ];
 
   void _onItemTapped(int index) {
@@ -79,64 +79,116 @@ class _HomePageState extends State<HomePage> {
         }
       },
       child: Scaffold(
-        body: _pages[_selectedIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          selectedItemColor: Colors.blue,
-          unselectedItemColor: Colors.grey,
-          backgroundColor: Colors.white,
-          elevation: 10,
-          type: BottomNavigationBarType.fixed,
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.calendar_today), label: "Appointment"),
-            BottomNavigationBarItem(icon: Icon(Icons.book), label: "Logbook"),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.medication), label: "Medications"),
-            BottomNavigationBarItem(icon: Icon(Icons.chat), label: "Chatbot"),
-          ],
-        ),
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: CurvedNavigationBar(
+        index: _selectedIndex,
+        onTap: _onItemTapped,
+        backgroundColor: Colors.white,
+        color: AppColors.primaryBlue,
+        buttonBackgroundColor: AppColors.primaryBlue,
+        animationDuration: Duration(milliseconds: 300),
+        items: const [
+          Icon(Icons.dashboard,
+              size: 30, color: Colors.white), // Accueil / Dashboard
+          Icon(Icons.event, size: 30, color: Colors.white), // Rendez-vous
+          Icon(Icons.accessibility_new,
+              size: 30, color: Colors.white), // Corps humain
+          Icon(Icons.monitor_heart,
+              size: 30, color: Colors.white), // Suivi de santé
+          Icon(Icons.local_pharmacy,
+              size: 30, color: Colors.white), // Médicaments
+        ],
       ),
-    );
+    ));
   }
 }
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
   @override
+  _DashboardPageState createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  int _currentIndex = 0;
+  final List<String> _appointments = [
+    "Dr. Smith - Cardiology",
+    "Dr. Lee - Dermatology",
+    "Dr. Adams - Neurology"
+  ];
+
+  @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDarkMode ? Colors.black : Colors.white,
+      appBar: AppBar(
+        title:
+            const Text("Home", style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: AppColors.primaryBlue,
+        actions: [
+          IconButton(
+            icon:
+                const Icon(Icons.notifications, size: 30, color: Colors.white),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon:
+                const Icon(Icons.account_circle, size: 30, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ProfilePage()),
+              );
+            },
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 40),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            const SizedBox(height: 20),
+            Column(
               children: [
-                const Expanded(
-                  child: Text(
-                    "Fatma Abdelkefi",
-                    style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
-                    overflow: TextOverflow.ellipsis,
+                CarouselSlider.builder(
+                  itemCount: _appointments.length,
+                  itemBuilder: (context, index, realIndex) {
+                    return Opacity(
+                      opacity: _currentIndex == index ? 1.0 : 0.5,
+                      child: _appointmentCard(_appointments[index], isDarkMode),
+                    );
+                  },
+                  options: CarouselOptions(
+                    height: 200, // Increased card height
+                    enlargeCenterPage: true,
+                    viewportFraction:
+                        0.5, // Shows more of previous and next items
+                    onPageChanged: (index, reason) {
+                      setState(() => _currentIndex = index);
+                    },
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.notifications, color: Colors.blue),
-                  onPressed: () {},
-                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(_appointments.length, (index) {
+                    return Container(
+                      width: 8,
+                      height: 8,
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _currentIndex == index
+                            ? AppColors.primaryBlue
+                            : Colors.grey,
+                      ),
+                    );
+                  }),
+                )
               ],
             ),
-            const SizedBox(height: 20),
-            _upcomingAppointmentCard(),
             const SizedBox(height: 30),
             _activityChartCard(),
             const SizedBox(height: 30),
@@ -146,13 +198,85 @@ class DashboardPage extends StatelessWidget {
           ],
         ),
       ),
+      // Replace the current onPressed method of the FloatingActionButton
+      floatingActionButton: Stack(
+        children: [
+          // Blur effect behind the button
+          Positioned(
+            bottom: 10, // Adjust position if needed
+            right: 10, // Adjust position if needed
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(40), // Circular blur area
+              child: BackdropFilter(
+                filter:
+                    ImageFilter.blur(sigmaX: 10, sigmaY: 10), // Blur intensity
+                child: Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.white
+                        .withOpacity(0.2), // Light transparent white
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Floating Action Button with Chatbot Navigation
+          Positioned(
+            bottom: 15, // Adjust position to align with blur
+            right: 15, // Adjust position to align with blur
+            child: FloatingActionButton(
+              onPressed: () {
+                showChatbot(context); // Show the chatbot bottom sheet
+              },
+              backgroundColor: Colors.white, // Ensure good contrast
+              child: Image.asset(
+                'assets/chatbot_icon.png', // Replace with your chatbot logo
+                width: 40,
+                height: 40,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _upcomingAppointmentCard() {
-    return _genericCard(
-        "Upcoming Appointment", Icons.calendar_today, "Dr. Smith - Cardiology",
-        showButton: true);
+  Widget _cardsRow(Widget card1, Widget card2) {
+    return Row(
+      children: [
+        Expanded(child: card1),
+        const SizedBox(width: 10),
+        Expanded(child: card2),
+      ],
+    );
+  }
+
+  Widget _appointmentCard(String title, bool isDarkMode) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      elevation: 12,
+      color: isDarkMode ? AppColors.primaryBlue : Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Upcoming Appointment",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black)),
+            const SizedBox(height: 8),
+            Text(title,
+                style: TextStyle(
+                    fontSize: 16,
+                    color: isDarkMode ? Colors.white : Colors.black)),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _activityChartCard() {
@@ -166,7 +290,7 @@ class DashboardPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text("Activity (Last 7 Days)",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
             const SizedBox(height: 12),
             SizedBox(
               height: 200,
@@ -212,16 +336,6 @@ class DashboardPage extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _cardsRow(Widget card1, Widget card2) {
-    return Row(
-      children: [
-        Expanded(child: card1),
-        const SizedBox(width: 10),
-        Expanded(child: card2),
-      ],
     );
   }
 
@@ -272,7 +386,7 @@ class DashboardPage extends StatelessWidget {
                       ),
                       PieChartSectionData(
                         value: 20, // 20% remaining
-                        color: Colors.grey[300]!,
+                        color: Colors.grey[500]!,
                         radius: 30, // Smaller radius for the sections
                       ),
                     ],
@@ -310,7 +424,7 @@ class DashboardPage extends StatelessWidget {
                   width: 8, // Even smaller size for the grey circle
                   height: 8, // Even smaller size for the grey circle
                   decoration: BoxDecoration(
-                    color: Colors.grey[300], // Grey color for pending
+                    color: Colors.grey[500], // Grey color for pending
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -318,7 +432,9 @@ class DashboardPage extends StatelessWidget {
                 const Text(
                   "Pending", // Text to display
                   style: TextStyle(
-                      fontSize: 10, color: Colors.grey), // Smaller font size
+                      fontSize: 10,
+                      color: Color.fromARGB(
+                          255, 107, 106, 106)), // Smaller font size
                 ),
               ],
             ),

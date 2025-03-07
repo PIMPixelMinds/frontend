@@ -1,97 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
-//becha
-import 'package:shared_preferences/shared_preferences.dart';
-import '../auth/login_page.dart';
+import '../../viewmodel/auth_viewmodel.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+      authViewModel.getProfile(context);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final authViewModel = Provider.of<AuthViewModel>(context);
+
+    final String userName = authViewModel.userProfile?["fullName"] ?? "Jaydon Mango";
+    final String userEmail = authViewModel.userProfile?["email"] ?? "jaydonmango@gmail.com";
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Profile"),
+        title: const Text("Profile", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),),
         backgroundColor: AppColors.primaryBlue,
+
       ),
-      backgroundColor: isDarkMode
-          ? AppColors.primaryBlue
-          : AppColors.primaryBlue, // Fond principal du Scaffold
-      body: Column(
+      backgroundColor: AppColors.primaryBlue,
+      body: Stack(
         children: [
-          _buildProfileHeader(isDarkMode), // En-tête du profil
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: isDarkMode ? Colors.grey[900] : Colors.white,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment
-                          .start, // Alignement du contenu à gauche
-                      children: [
-                        _buildSectionTitle("Account Settings", isDarkMode),
-                        _buildProfileOption(
-                            context, Icons.person, "Personal Information", () {
-                          Navigator.pushNamed(context, '/personalInformation');
-                        }, isDarkMode),
-                        _buildProfileOption(
-                            context, Icons.lock, "Password & Security", () {
-                          Navigator.pushNamed(context, '/passwordSecurity');
-                        }, isDarkMode),
-                        _buildProfileOption(context, Icons.medical_information,
-                            "Medical History", () {
-                          Navigator.pushNamed(context, '/medicalHistory');
-                        }, isDarkMode),
-                        _buildProfileOption(
-                            context, Icons.co_present, "Primary Caregiver", () {
-                          Navigator.pushNamed(context, '/primaryCaregiver');
-                        }, isDarkMode),
-                        _buildSectionTitle("Other", isDarkMode),
-                        _buildProfileOption(context, Icons.notifications,
-                            "Notifications Preferences", () {}, isDarkMode),
-                        _buildProfileOption(context, Icons.settings, "Settings",
-                            () {}, isDarkMode),
-                        _buildProfileOption(context, Icons.article_outlined,
-                            "Terms & Conditions", () {}, isDarkMode),
-                        _buildProfileOption(context, Icons.privacy_tip_outlined,
-                            "Privacy Policy", () {}, isDarkMode),
-                        _buildProfileOption(
-                            context,
-                            Icons.announcement_outlined,
-                            "Help & Assistance",
-                            () {},
-                            isDarkMode),
-                        const SizedBox(height: 20),
-                        _buildProfileOption(
-                            context, Icons.logout_outlined, "Log Out", () {
-                          _logout(context);
-                        }, isDarkMode),
-                        const SizedBox(height: 30),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
+          Column(
+            children: [
+              _buildProfileHeader(isDarkMode, userName, userEmail),
+            ],
           ),
+          _buildBottomSheet(context, isDarkMode),
         ],
       ),
     );
   }
 
   // 🟢 **En-tête du profil**
-  Widget _buildProfileHeader(bool isDarkMode) {
+  Widget _buildProfileHeader(bool isDarkMode, String userName, String userEmail) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
@@ -102,12 +60,11 @@ class ProfilePage extends StatelessWidget {
         children: [
           const SizedBox(height: 10),
           Text(
-            "Jaydon Mango",
-            style: TextStyle(
-                fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+            userName.toUpperCase(), // Use the dynamic user name
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.white),
           ),
           Text(
-            "jaydonmango@gmail.com",
+            userEmail, // Use the dynamic user email
             style: TextStyle(fontSize: 14, color: Colors.white70),
           ),
         ],
@@ -115,85 +72,136 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
+  // 🟣 **Bottom Sheet stylisée**
+  Widget _buildBottomSheet(BuildContext context, bool isDarkMode) {
+  return DraggableScrollableSheet(
+    initialChildSize: 0.77, // Hauteur initiale
+    minChildSize: 0.77, // Hauteur minimale
+    //maxChildSize: 0.9, // Hauteur maximale
+    builder: (context, scrollController) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+        decoration: BoxDecoration(
+          color: isDarkMode ? Colors.grey[900] : Colors.white,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              spreadRadius: 2,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: SingleChildScrollView( // ✅ Permet de scroller si nécessaire
+          controller: scrollController, // ✅ Ajout du contrôleur pour le défilement
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              _buildSectionTitle("Account", isDarkMode),
+              _buildProfileOption(context, Icons.person, "Personal Information", () {
+                Navigator.pushNamed(context, '/personalInformation');
+              }, isDarkMode),
+              _buildProfileOption(context, Icons.lock, "Password & Security", () {
+                Navigator.pushNamed(context, '/passwordSecurity');
+              }, isDarkMode),
+              _buildProfileOption(context, Icons.medical_information, "Medical History", () {
+                Navigator.pushNamed(context, '/medicalHistory');
+              }, isDarkMode),
+              _buildProfileOption(context, Icons.co_present, "Primary Caregiver", () {
+                Navigator.pushNamed(context, '/primaryCaregiver');
+              }, isDarkMode),
+
+              const SizedBox(height: 10),
+              const Divider(),
+              _buildProfileOption(context, Icons.notifications, "Notifications Preferences", () {}, isDarkMode),
+              _buildProfileOption(context, Icons.settings, "Settings", () {}, isDarkMode),
+              _buildProfileOption(context, Icons.article_outlined, "Terms & Conditions", () {}, isDarkMode),
+              _buildProfileOption(context, Icons.privacy_tip_outlined, "Privacy Policy", () {}, isDarkMode),
+              _buildProfileOption(context, Icons.help_outline, "Help & Assistance", () {}, isDarkMode),
+
+              const SizedBox(height: 15),
+              const Divider(),
+              _buildProfileOption(context, Icons.delete_forever, "Delete My Account", () {
+                _confirmDeleteAccount(context);
+              }, isDarkMode),
+
+              _buildProfileOption(context, Icons.logout, "Log Out", () {
+                _logout(context);
+              }, isDarkMode),
+
+              const SizedBox(height: 10),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+
   // 🔹 **Titre de section**
   Widget _buildSectionTitle(String title, bool isDarkMode) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20, bottom: 5, left: 20),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          title,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: isDarkMode ? Colors.white60 : Colors.grey,
-          ),
-        ),
+      padding: const EdgeInsets.only(top: 10, bottom: 5),
+      child: Text(
+        title,
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white60 : Colors.grey),
       ),
     );
   }
 
   // 🔹 **Options du menu du profil**
-  Widget _buildProfileOption(BuildContext context, IconData icon, String title,
-      VoidCallback onTap, bool isDarkMode) {
-    return Card(
-      color: isDarkMode ? Colors.grey[900] : Colors.white,
-      elevation: 0,
-      child: ListTile(
-        leading: Icon(icon, color: isDarkMode ? Colors.white : Colors.grey),
-        title: Text(
-          title,
-          style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: isDarkMode ? Colors.white : Colors.black),
+  Widget _buildProfileOption(BuildContext context, IconData icon, String title, VoidCallback onTap, bool isDarkMode, {bool isDestructive = false}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        color: isDarkMode ? Colors.grey[900] : Colors.white,
+        elevation: 0,
+        child: ListTile(
+          leading: Icon(icon, color: (isDarkMode ? Colors.white : Colors.grey)),
+          title: Text(
+            title,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: (isDarkMode ? Colors.white : Colors.black)),
+          ),
+          trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
         ),
-        trailing:
-            const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-        onTap: onTap,
       ),
     );
   }
 
-  // 🔴 **Bouton de déconnexion**
-  Widget _buildLogoutButton(BuildContext context, bool isDarkMode) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () {
-          _logout(context);
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.redAccent,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-        child: const Text("Log Out",
-            style: TextStyle(
-                fontSize: 16,
-                color: Colors.white,
-                fontWeight: FontWeight.bold)),
-      ),
-    );
+  // 🔴 **Déconnexion**
+  void _logout(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Logging out...")));
+    // Ajoute ici la logique de déconnexion
   }
 
-  // **Déconnexion** aamletha mariem w sala7t'ha ena la mzeya
-  void _logout(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear(); // Clear saved login details
-
-    // Show a logout confirmation
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text("Logged out successfully."),
-      duration: Duration(seconds: 2),
-    ));
-
-    // Navigate back to the LoginPage
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginPage()),
-      (route) => false, // Clears all previous screens from the stack
+  // ❌ **Confirmation de suppression du compte**
+  void _confirmDeleteAccount(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Delete Account"),
+        content: const Text("Are you sure you want to permanently delete your account? This action cannot be undone."),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel", style: TextStyle(color: Colors.white))),
+          TextButton(onPressed: () {}, child: const Text("Delete", style: TextStyle(color: AppColors.error))),
+        ],
+      ),
     );
   }
 }

@@ -17,11 +17,27 @@ class AuthRepository {
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      final data = jsonDecode(response.body);
-      print("Réponse login : $data"); // Log pour déboguer
-      return data;
+      return jsonDecode(response.body);
     } else {
       throw Exception(jsonDecode(response.body)["message"] ?? "Login failed");
+    }
+  }
+
+/********************************/
+  Future<Map<String, dynamic>?> googleLogin(String googleToken) async {
+    final url = Uri.parse('${ApiConstants.baseUrl}/auth/google/login');
+
+    final response = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"token": googleToken}),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception(
+          jsonDecode(response.body)["message"] ?? "Google login failed");
     }
   }
 
@@ -44,6 +60,7 @@ class AuthRepository {
           jsonDecode(response.body)['message'] ?? 'Failed to refresh token');
     }
   }
+
   /********************************/
 
   Future<Map<String, dynamic>?> registerUser({
@@ -182,7 +199,6 @@ class AuthRepository {
   Future<Map<String, dynamic>> updateProfile({
     required String token,
     required String newName,
-    required String newEmail,
     required String newBirthday,
     required String newGender,
   }) async {
@@ -192,11 +208,10 @@ class AuthRepository {
       url,
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer $token", // Include the JWT token
+        "Authorization": "Bearer $token",
       },
       body: jsonEncode({
         "newName": newName,
-        "newEmail": newEmail,
         "newBirthday": newBirthday,
         "newGender": newGender,
       }),
@@ -234,6 +249,60 @@ class AuthRepository {
       }
     } catch (e) {
       throw Exception("Error completing profile: $e");
+    }
+  }
+
+  /*******************************************************/
+  Future<void> changePassword({
+    required String token,
+    required String oldPassword,
+    required String newPassword,
+  }) async {
+    final url = Uri.parse(ApiConstants.changePasswordEndpoint);
+
+    final response = await http.put(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+      body: jsonEncode({
+        "oldPassword": oldPassword,
+        "newPassword": newPassword,
+      }),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return;
+    } else {
+      throw Exception(
+          jsonDecode(response.body)["message"] ?? "Failed to change password");
+    }
+  }
+
+/*****************************************************/
+  Future<void> updateEmail({
+    required String token,
+    required String newEmail,
+  }) async {
+    final url = Uri.parse(ApiConstants.updateProfileEndpoint);
+
+    final response = await http.put(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+      body: jsonEncode({
+        "newEmail": newEmail,
+      }),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return;
+    } else {
+      throw Exception(
+          jsonDecode(response.body)["message"] ?? "Failed to update email");
     }
   }
 }
