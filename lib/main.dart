@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
           '/personalInformation': (context) => const PersonalInformationPage(),
           '/medicalHistory': (context) => const MedicalHistoryPage(),
           '/primaryCaregiver': (context) => const PrimaryCaregiverPage(),
-          '/setupAccount': (context) => const SetupAccountPage(),
+          //'/setupAccount': (context) => const SetupAccountPage(),
           '/medications': (context) => const MedicationsScreen(),
           '/medicineInfo': (context) {
             final medicationId = ModalRoute.of(context)!.settings.arguments as String?;
