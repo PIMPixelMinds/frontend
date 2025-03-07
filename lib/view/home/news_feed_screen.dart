@@ -24,13 +24,12 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[900],
-      appBar: AppBar(
-        title:
-            const Text("MS News Feed", style: TextStyle(color: Colors.white)),
+       appBar: AppBar(
+        title: const Text("MS News Feed", style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.grey[850], // Darker AppBar Background
-        iconTheme:
-            const IconThemeData(color: Colors.white), // White back button
+        iconTheme: const IconThemeData(color: Colors.white), // White back button
       ),
+      
       body: FutureBuilder<List<dynamic>>(
         future: news,
         builder: (context, snapshot) {
@@ -44,14 +43,13 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
             return _buildEmptyState();
           }
           return ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
               var article = snapshot.data![index];
               return NewsCard(
                 title: article['title'],
                 imageUrl: article['image'] ?? '',
-                
                 link: article['link'],
               );
             },
@@ -65,7 +63,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
     return ListView.builder(
       itemCount: 5,
       itemBuilder: (context, index) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         child: Shimmer.fromColors(
           baseColor: Colors.grey[800]!, // Darker shimmer effect
           highlightColor: Colors.grey[600]!,
@@ -86,15 +84,15 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline, color: Colors.red, size: 50),
-          const SizedBox(height: 10),
-          const Text("Failed to fetch news.", style: TextStyle(fontSize: 16)),
-          const SizedBox(height: 10),
+          Icon(Icons.error_outline, color: Colors.red, size: 50),
+          SizedBox(height: 10),
+          Text("Failed to fetch news.", style: TextStyle(fontSize: 16)),
+          SizedBox(height: 10),
           ElevatedButton(
             onPressed: () => setState(() {
               news = fetchNews();
             }),
-            child: const Text("Retry"),
+            child: Text("Retry"),
           ),
         ],
       ),
@@ -102,7 +100,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
   }
 
   Widget _buildEmptyState() {
-    return const Center(
+    return Center(
       child: Text(
         "No news available.",
         style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),

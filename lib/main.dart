@@ -1,92 +1,62 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:pim/firebase_options.dart';
-import 'package:pim/view/appointment/add_appointment.dart';
-import 'package:pim/view/appointment/appointment_view.dart';
-import 'package:pim/view/appointment/notification_page.dart';
-import 'package:pim/view/medication/add_reminder_screen.dart';
-import 'package:pim/view/medication/medications_screen.dart';
-import 'package:pim/view/medication/medicine_info_screen.dart';
-import 'package:pim/viewmodel/appointment_viewmodel.dart';
-import 'package:pim/viewmodel/medication_viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'core/constants/app_colors.dart';
-import 'view/appointment/firebase_api.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'view/auth/login_page.dart';
+import 'view/home/home_page.dart';
+import 'view/auth/register_page.dart';
 import 'view/auth/medical_history_page.dart';
 import 'view/auth/password_security_page.dart';
 import 'view/auth/perso_information_page.dart';
 import 'view/auth/primary_caregiver_page.dart';
-import 'view/auth/register_page.dart';
 import 'view/auth/setup_account_page.dart';
-import 'view/home/home_page.dart';
+import 'view/medication/medications_screen.dart';
+import 'view/medication/medicine_info_screen.dart';
+import 'view/medication/add_reminder_screen.dart';
 import 'viewmodel/auth_viewmodel.dart';
-import 'viewmodel/healthTracker_viewmodel.dart';
-
-final navigatorKey = GlobalKey<NavigatorState>();
-
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print("Handling background message: ${message.messageId}");
-}
+import 'viewmodel/medication_viewmodel.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  runApp(const MyApp());
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool isLoggedIn = (prefs.getBool("rememberMe") ?? false) == true;
+
+  runApp(MyApp(isLoggedIn: isLoggedIn));
 }
 
 class MyApp extends StatelessWidget {
-<<<<<<< Updated upstream
-  const MyApp({super.key});
-=======
   final bool isLoggedIn;
 
-  const MyApp({super.key, required this.isLoggedIn});
->>>>>>> Stashed changes
+  const MyApp({Key? key, required this.isLoggedIn}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final FirebaseApi firebaseApi = FirebaseApi();
-    firebaseApi.initNotifications('whatever');
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AuthViewModel()),
-        ChangeNotifierProvider(create: (_) => AppointmentViewModel()),
-        ChangeNotifierProvider(
-            create: (context) =>
-                HealthTrackerViewModel()), // 🔥 Ajout de AuthViewModel
         ChangeNotifierProvider(create: (context) => MedicationViewModel()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        home: isLoggedIn ? const HomePage() : const LoginPage(),
         themeMode: ThemeMode.system,
         theme: ThemeData(
           brightness: Brightness.light,
-          primaryColor: AppColors.primaryBlue,
-          fontFamily: 'Montserrat',
+          primarySwatch: Colors.blue,
         ),
         darkTheme: ThemeData(
           brightness: Brightness.dark,
-          primaryColor: AppColors.primaryBlue,
-          fontFamily: 'Montserrat',
+          primarySwatch: Colors.blue,
         ),
-        initialRoute: '/login',
         routes: {
-          '/login': (context) => LoginPage(),
-          '/register': (context) => RegisterPage(),
-          '/home': (context) => HomePage(),
-          '/passwordSecurity': (context) => PasswordSecurityPage(),
-          '/personalInformation': (context) => PersonalInformationPage(),
-          '/medicalHistory': (context) => MedicalHistoryPage(),
-          '/primaryCaregiver': (context) => PrimaryCaregiverPage(),
-          //'/setupAccount': (context) => SetupAccountPage(),
-          '/addAppointment': (context) => AddAppointmentPage(),
-          '/displayAppointment': (context) => AppointmentPage(),
-          '/notification_screen': (context) => NotificationPage(),
+          '/login': (context) => const LoginPage(),
+          '/register': (context) => const RegisterPage(),
+          '/home': (context) => const HomePage(),
+          '/passwordSecurity': (context) => const PasswordSecurityPage(),
+          '/personalInformation': (context) => const PersonalInformationPage(),
+          '/medicalHistory': (context) => const MedicalHistoryPage(),
+          '/primaryCaregiver': (context) => const PrimaryCaregiverPage(),
+          //'/setupAccount': (context) => const SetupAccountPage(),
           '/medications': (context) => const MedicationsScreen(),
           '/medicineInfo': (context) {
             final medicationId = ModalRoute.of(context)!.settings.arguments as String?;

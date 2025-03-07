@@ -1,5 +1,5 @@
 class ApiConstants {
-  static const String baseUrl = "http://192.168.1.17:3000";
+  static const String baseUrl = "http://172.16.13.155:3000";
   static const String loginEndpoint = "$baseUrl/auth/login";
   static const String signupEndpoint = "$baseUrl/auth/signup";
   static const String forgotPasswordEndpoint = "$baseUrl/auth/forgot-password";
@@ -35,6 +35,9 @@ class ApiConstants {
   static String  getMedicationEndpoint(String id) => "$baseUrl/medications/$id";
   static String  updateMedicationEndpoint(String id) => "$baseUrl/medications/$id";
   static String  deleteMedicationEndpoint(String id) => "$baseUrl/medications/$id";
+
+static const String getHistoriqueEndpoint = "$baseUrl/historique"; // Add this line
+static const String saveHistoriqueEndpoint = "$baseUrl/historique/upload-screenshot";
 
 
 }

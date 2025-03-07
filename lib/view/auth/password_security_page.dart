@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
-import '../../viewmodel/auth_viewmodel.dart'; // Import your AuthViewModel
 
 class PasswordSecurityPage extends StatefulWidget {
   const PasswordSecurityPage({super.key});
@@ -25,8 +23,7 @@ class _PasswordSecurityPageState extends State<PasswordSecurityPage> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back,
-              color: isDarkMode ? Colors.white : Colors.black),
+          icon: Icon(Icons.arrow_back, color: isDarkMode ? Colors.white : Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
         elevation: 0,
@@ -37,16 +34,12 @@ class _PasswordSecurityPageState extends State<PasswordSecurityPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            _buildSecurityOption(context, Icons.lock, "Change Password", "PIN",
-                () {
-              _showChangePasswordDialog(context);
-            }),
-            _buildSecurityOption(
-                context, Icons.face, "Face ID", "Not Registered", () {}),
-            _buildSecurityOption(context, Icons.phone, "Verified Phone Number",
-                "Not Registered", _showUpdatePhoneDialog),
-            _buildSecurityOption(context, Icons.email, "Verified Email Address",
-                "Registered", _showUpdateEmailDialog),
+_buildSecurityOption(context, Icons.lock, "Change Password", "PIN", () {
+  _showChangePasswordDialog(context);
+}),
+_buildSecurityOption(context, Icons.face, "Face ID", "Not Registered", () {}),
+            _buildSecurityOption(context, Icons.phone, "Verified Phone Number", "Not Registered", _showUpdatePhoneDialog),
+            _buildSecurityOption(context, Icons.email, "Verified Email Address", "Registered", _showUpdateEmailDialog),
           ],
         ),
       ),
@@ -54,8 +47,7 @@ class _PasswordSecurityPageState extends State<PasswordSecurityPage> {
   }
 
   // **Widget option sécurité**
-  Widget _buildSecurityOption(BuildContext context, IconData icon, String title,
-      String subtitle, VoidCallback onTap) {
+  Widget _buildSecurityOption(BuildContext context, IconData icon, String title, String subtitle, VoidCallback onTap) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Card(
@@ -66,24 +58,17 @@ class _PasswordSecurityPageState extends State<PasswordSecurityPage> {
       child: ListTile(
         leading: Icon(icon, color: isDarkMode ? Colors.white : Colors.black),
         title: Text(title,
-            style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: isDarkMode ? Colors.white : Colors.black)),
-        subtitle: Text(subtitle,
-            style: TextStyle(
-                color: subtitle == "Registered" ? Colors.green : Colors.grey)),
-        trailing:
-            const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: isDarkMode ? Colors.white : Colors.black)),
+        subtitle: Text(subtitle, style: TextStyle(color: subtitle == "Registered" ? Colors.green : Colors.grey)),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
         onTap: onTap,
       ),
     );
   }
 
   // **Bottom Sheet générique**
-  void _showBottomSheet(BuildContext context, String title, String hint,
-      TextInputType inputType, VoidCallback onSave,
-      {required TextEditingController controller}) {
+  void _showBottomSheet(BuildContext context, String title, String hint, TextInputType inputType, VoidCallback onSave) {
+    TextEditingController controller = TextEditingController();
     bool isFormValid = false;
 
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -92,8 +77,7 @@ class _PasswordSecurityPageState extends State<PasswordSecurityPage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
@@ -107,33 +91,24 @@ class _PasswordSecurityPageState extends State<PasswordSecurityPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(title,
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: isDarkMode ? Colors.white : Colors.black)),
+                  Text(title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
                   const SizedBox(height: 10),
                   _buildTextField(hint, controller, () {
                     setState(() {
                       isFormValid = controller.text.isNotEmpty &&
                           (inputType == TextInputType.phone
-                              ? RegExp(r'^\+?[0-9]{7,15}$')
-                                  .hasMatch(controller.text)
-                              : RegExp(r'^[^@]+@[^@]+\.[^@]+')
-                                  .hasMatch(controller.text));
+                              ? RegExp(r'^\+?[0-9]{7,15}$').hasMatch(controller.text)
+                              : RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(controller.text));
                     });
                   }, inputType, isDarkMode),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: isFormValid
-                        ? () {
-                            onSave();
-                            Navigator.pop(context);
-                          }
-                        : null,
+                    onPressed: isFormValid ? () {
+                      onSave();
+                      Navigator.pop(context);
+                    } : null,
                     style: _buildButtonStyle(isDarkMode),
-                    child: const Text("Save",
-                        style: TextStyle(color: Colors.white)),
+                    child: const Text("Save", style: TextStyle(color: Colors.white)),
                   ),
                   const SizedBox(height: 10),
                 ],
@@ -146,26 +121,15 @@ class _PasswordSecurityPageState extends State<PasswordSecurityPage> {
   }
 
   void _showUpdatePhoneDialog() {
-    TextEditingController phoneController = TextEditingController();
-    _showBottomSheet(context, "Update Phone Number", "Enter phone number",
-        TextInputType.phone, () {}, controller: phoneController);
+    _showBottomSheet(context, "Update Phone Number", "Enter phone number", TextInputType.phone, () {});
   }
 
   void _showUpdateEmailDialog() {
-    TextEditingController emailController = TextEditingController();
-    _showBottomSheet(context, "Update Email", "Enter email address",
-        TextInputType.emailAddress, () async {
-      final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
-      await authViewModel.updateEmail(
-        context: context,
-        newEmail: emailController.text, // Use the value from the text field
-      );
-    }, controller: emailController);
+    _showBottomSheet(context, "Update Email", "Enter email address", TextInputType.emailAddress, () {});
   }
 
   // **TextField réutilisable**
-  Widget _buildTextField(String label, TextEditingController controller,
-      VoidCallback validateForm, TextInputType keyboardType, bool isDarkMode) {
+  Widget _buildTextField(String label, TextEditingController controller, VoidCallback validateForm, TextInputType keyboardType, bool isDarkMode) {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
@@ -194,20 +158,21 @@ class _PasswordSecurityPageState extends State<PasswordSecurityPage> {
           return AppColors.primaryBlue;
         },
       ),
-      minimumSize:
-          WidgetStateProperty.all<Size>(const Size(double.infinity, 50)),
+      minimumSize: WidgetStateProperty.all<Size>(const Size(double.infinity, 50)),
       shape: WidgetStateProperty.all<RoundedRectangleBorder>(
         RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }
 
+
+
+
   // Fonction pour afficher le changement de mot de passe avec l'icône "œil"
   void _showChangePasswordDialog(BuildContext context) {
     TextEditingController passwordController = TextEditingController();
     TextEditingController newPasswordController = TextEditingController();
-    TextEditingController confirmNewPasswordController =
-        TextEditingController();
+    TextEditingController confirmNewPasswordController = TextEditingController();
 
     bool isFormValid = false;
 
@@ -226,90 +191,59 @@ class _PasswordSecurityPageState extends State<PasswordSecurityPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
             return Padding(
               padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom,
-                  left: 16,
-                  right: 16,
-                  top: 16),
+                  bottom: MediaQuery.of(context).viewInsets.bottom, left: 16, right: 16, top: 16),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text("Change Password",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const Text("Change Password", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
-                  _buildPasswordField(
-                      "Current Password", passwordController, isPasswordVisible,
-                      () {
+                  _buildPasswordField("Current Password", passwordController, isPasswordVisible, () {
                     setState(() {
                       isPasswordVisible = !isPasswordVisible;
                     });
                   }, validateForm),
-                  _buildPasswordField("New Password", newPasswordController,
-                      isNewPasswordVisible, () {
+                  _buildPasswordField("New Password", newPasswordController, isNewPasswordVisible, () {
                     setState(() {
                       isNewPasswordVisible = !isNewPasswordVisible;
                     });
                   }, validateForm),
-                  _buildPasswordField(
-                      "Confirm New Password",
-                      confirmNewPasswordController,
-                      isConfirmPasswordVisible, () {
+                  _buildPasswordField("Confirm New Password", confirmNewPasswordController, isConfirmPasswordVisible, () {
                     setState(() {
                       isConfirmPasswordVisible = !isConfirmPasswordVisible;
                     });
                   }, validateForm),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: isFormValid
-                        ? () async {
-                            final authViewModel = Provider.of<AuthViewModel>(
-                                context,
-                                listen: false);
-                            await authViewModel.changePassword(
-                              context: context,
-                              oldPassword: passwordController.text,
-                              newPassword: newPasswordController.text,
-                            );
-                            Navigator.pop(context);
-                          }
-                        : null,
+                    onPressed: isFormValid ? () => Navigator.pop(context) : null,
                     style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (Set<WidgetState> states) {
-                          if (states.contains(WidgetState.disabled)) {
-                            return AppColors.primaryBlue
-                                .withOpacity(0.7); // Désactivé
-                          }
-                          if (states.contains(WidgetState.pressed)) {
-                            return AppColors.primaryBlue
-                                .withOpacity(0.9); // En cours de clic
-                          }
-                          return AppColors.primaryBlue; // Par défaut
-                        },
-                      ),
-                      minimumSize: WidgetStateProperty.all<Size>(
-                          const Size(double.infinity, 50)),
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
-                      ),
-                      overlayColor: WidgetStateProperty.all<Color>(
-                        AppColors.primaryBlue
-                            .withOpacity(0.2), // Effet de surbrillance
-                      ),
-                      shadowColor: WidgetStateProperty.all<Color>(
-                          Colors.transparent), // Supprime l'ombre
-                    ),
-                    child: const Text("Save",
-                        style: TextStyle(color: Colors.white)),
+    backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+      (Set<WidgetState> states) {
+        if (states.contains(WidgetState.disabled)) {
+          return AppColors.primaryBlue.withOpacity(0.7); // Désactivé
+        }
+        if (states.contains(WidgetState.pressed)) {
+          return AppColors.primaryBlue.withOpacity(0.9); // En cours de clic
+        }
+        return AppColors.primaryBlue; // Par défaut
+      },
+    ),
+    minimumSize: WidgetStateProperty.all<Size>(const Size(double.infinity, 50)),
+    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+      RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    ),
+    overlayColor: WidgetStateProperty.all<Color>(
+      AppColors.primaryBlue.withOpacity(0.2), // Effet de surbrillance
+    ),
+    shadowColor: WidgetStateProperty.all<Color>(Colors.transparent), // Supprime l'ombre
+  ),
+                    child: const Text("Save", style: TextStyle(color: Colors.white)),
                   ),
                   const SizedBox(height: 10),
                 ],
@@ -322,12 +256,7 @@ class _PasswordSecurityPageState extends State<PasswordSecurityPage> {
   }
 
   // Widget pour afficher un champ de mot de passe avec l'icône "œil"
-  Widget _buildPasswordField(
-      String label,
-      TextEditingController controller,
-      bool isVisible,
-      VoidCallback toggleVisibility,
-      VoidCallback validateForm) {
+  Widget _buildPasswordField(String label, TextEditingController controller, bool isVisible, VoidCallback toggleVisibility, VoidCallback validateForm) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
@@ -342,8 +271,7 @@ class _PasswordSecurityPageState extends State<PasswordSecurityPage> {
           fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[200],
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
           suffixIcon: IconButton(
-            icon: Icon(isVisible ? Icons.visibility : Icons.visibility_off,
-                color: Colors.grey),
+            icon: Icon(isVisible ? Icons.visibility : Icons.visibility_off, color: Colors.grey),
             onPressed: toggleVisibility,
           ),
         ),

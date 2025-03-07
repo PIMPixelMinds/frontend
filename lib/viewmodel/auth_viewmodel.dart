@@ -93,9 +93,7 @@ class AuthViewModel extends ChangeNotifier {
           "Refresh Token stocké : ${data["refreshToken"] ?? 'Aucun refresh token'}");
       print("Timestamp de création : ${DateTime.now().millisecondsSinceEpoch}");
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Login successful!")),
-      );
+      
 
       Navigator.pushReplacementNamed(context, "/home");
     } catch (e) {
@@ -108,7 +106,6 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
-<<<<<<< Updated upstream
 
 /********************************/
   // Vérifie si le token est expiré (5 minutes = 300000 millisecondes)
@@ -173,9 +170,6 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 /********************************/
-=======
-/// *****************************
->>>>>>> Stashed changes
 
   Future<void> registerUser(
     BuildContext context,
@@ -208,7 +202,7 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
-/// *****************************
+/********************************/
 
   Future<void> sendForgotPasswordRequest(
       BuildContext context, String email) async {
@@ -242,7 +236,7 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
-/// *****************************
+/********************************/
 
   Future<bool> verifyOtp(BuildContext context, String email, String otp) async {
     try {
@@ -289,7 +283,7 @@ class AuthViewModel extends ChangeNotifier {
     );
   }
 
-/// *****************************
+/********************************/
 
   Future<void> resendOtp(BuildContext context, String email) async {
     try {
@@ -304,7 +298,7 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
-/// *****************************
+/********************************/
 
   void _showOTPBottomSheet(BuildContext context, String email) {
     showModalBottomSheet(
@@ -318,7 +312,7 @@ class AuthViewModel extends ChangeNotifier {
     );
   }
 
-/// ********************************
+/***********************************/
 
   Future<void> resetPassword(
       BuildContext context, String email, String newPassword) async {
@@ -375,14 +369,9 @@ class AuthViewModel extends ChangeNotifier {
       });
     }
   }
-<<<<<<< Updated upstream
 
 /************************************************************/
   Future<void> updateProfile({
-=======
-/// *********************************************************
-Future<void> updateProfile({
->>>>>>> Stashed changes
     required BuildContext context,
     required String newName,
     required String newBirthday,

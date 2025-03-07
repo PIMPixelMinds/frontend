@@ -55,6 +55,11 @@ dependencies:
   cupertino_icons: ^1.0.8
   http: ^1.2.2
   shared_preferences: ^2.0.15  # Utilisez la dernière version
+  photo_view: ^0.15.0
+  body_part_selector: ^0.2.0
+  screenshot: ^1.2.3
+  path: ^1.9.0
+  flutter_svg: ^1.1.0
 
 
   local_auth: ^2.1.0

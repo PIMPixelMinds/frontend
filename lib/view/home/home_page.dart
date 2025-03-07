@@ -11,6 +11,8 @@ import '../tracking_log/HealthTrackerPage.dart';
 import 'Chatbot.dart';
 import 'dart:ui';
 
+import 'news_feed_screen.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -41,17 +43,10 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   final List<Widget> _pages = <Widget>[
     const DashboardPage(),
-<<<<<<< Updated upstream
     AppointmentPage(),
     BodyPage(),
     HealthTrackerPage(),
     const MedicationsScreen(),
-=======
-    const Center(child: Text("Appointements", style: TextStyle(fontSize: 22))),
-    const HealthTrackerPage(),
-    const Center(child: Text("Medications", style: TextStyle(fontSize: 22))),
-    const ProfilePage(),
->>>>>>> Stashed changes
   ];
 
   void _onItemTapped(int index) {
@@ -62,8 +57,28 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< Updated upstream
-    return Scaffold(
+    return GestureDetector(
+      onHorizontalDragEnd: (details) {
+        if (details.primaryVelocity! > 0) {
+          // Swiping left (like Google Discover)
+          Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (_, __, ___) => NewsFeedScreen(),
+              transitionsBuilder: (_, animation, __, child) {
+                return SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(-1.0, 0.0), // Start from the right
+                    end: Offset.zero, // Move to the center
+                  ).animate(animation),
+                  child: child,
+                );
+              },
+            ),
+          );
+        }
+      },
+      child: Scaffold(
       body: _pages[_selectedIndex],
       bottomNavigationBar: CurvedNavigationBar(
         index: _selectedIndex,
@@ -83,51 +98,8 @@ class _HomePageState extends State<HomePage> {
           Icon(Icons.local_pharmacy,
               size: 30, color: Colors.white), // Médicaments
         ],
-=======
-    return GestureDetector(
-      onHorizontalDragEnd: (details) {
-        if (details.primaryVelocity! > 0) {
-          // Swiping left (like Google Discover)
-          Navigator.push(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (_, __, ___) => const NewsFeedScreen(),
-              transitionsBuilder: (_, animation, __, child) {
-                return SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(-1.0, 0.0), // Start from the right
-                    end: Offset.zero, // Move to the center
-                  ).animate(animation),
-                  child: child,
-                );
-              },
-            ),
-          );
-        }
-      },
-      child: Scaffold(
-        body: _pages[_selectedIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          selectedItemColor: Colors.blue,
-          unselectedItemColor: Colors.grey,
-          backgroundColor: Colors.white,
-          elevation: 10,
-          type: BottomNavigationBarType.fixed,
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.calendar_today), label: "Appointment"),
-            BottomNavigationBarItem(icon: Icon(Icons.book), label: "Logbook"),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.medication), label: "Medications"),
-            BottomNavigationBarItem(icon: Icon(Icons.chat), label: "Chatbot"),
-          ],
-        ),
->>>>>>> Stashed changes
       ),
-    );
+    ));
   }
 }
 
