@@ -136,7 +136,11 @@ packages:
       sha256: "320fcfb6f33caa90f0b58380489fc5ac05d99ee94b61aa96ec2bff0ba81d3c2b"
       url: "https://pub.dev"
     source: hosted
+<<<<<<< HEAD
     version: "0.9.3+4"
+=======
+    version: "0.9.3+3"
+>>>>>>> fbaab48 (Home-Profile-TrackingLog)
   fl_chart:
     dependency: "direct main"
     description:
