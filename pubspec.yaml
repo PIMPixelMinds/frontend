@@ -49,6 +49,7 @@ dependencies:
   firebase_analytics: ^11.4.4
   flutter_tts: ^3.8.5  # For text-to-speech
   speech_to_text: ^6.1.1  # For speech recognition
+  tutorial_coach_mark: ^1.2.6
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

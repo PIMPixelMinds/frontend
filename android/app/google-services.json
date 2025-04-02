@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1013423485138",
+    "project_id": "pimpim-e4b35",
+    "storage_bucket": "pimpim-e4b35.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1013423485138:android:a683e2c9669bbdfa9e7d0b",
+        "android_client_info": {
+          "package_name": "com.example.frontend_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNW_Pw1LspXAACjtRYt2bsEaoCzFJjYoo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1013423485138:android:b24271064023537c9e7d0b",
+        "android_client_info": {
+          "package_name": "com.example.pim"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNW_Pw1LspXAACjtRYt2bsEaoCzFJjYoo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
